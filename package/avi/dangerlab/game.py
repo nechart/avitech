@@ -200,15 +200,15 @@ class DangerLabirintGame:
     def check_x(self, x_player_plan, wall_only = False):
         if x_player_plan[0] < 0 or x_player_plan[0] > self.map_size - 1: return False
         if x_player_plan[1] < 0 or x_player_plan[1] > self.map_size - 1: return False
-        if (wall_only is not True):
+        if (not wall_only):
             old_value = self.lab_map[x_player_plan[0], x_player_plan[1]]
             if old_value != obj.space: return False
         return True  
     
     def player_move(self, x_player_plan):
-        if self.check_time() is not True: return False
-        if self.check_x(x_player_plan) is not True: return False
-        if self.check_state() is not True: return False        
+        if not self.check_time(): return False
+        if not self.check_x(x_player_plan): return False
+        if not self.check_state(): return False        
         self.state = player_state.show
         x_player = self.get_x_player()
         self.lab_map[x_player[0], x_player[1]] = obj.space
@@ -219,14 +219,14 @@ class DangerLabirintGame:
         self.update_game_status()
 
     def player_hide(self):
-        if self.check_time() is not True: return False
-        if self.check_state() is not True: return False                
+        if not self.check_time(): return False
+        if not self.check_state(): return False                
         self.state = player_state.hide
         self.draw_map_fog()
 
     def player_pick(self):
-        if self.check_time() is not True: return False
-        if self.check_state() is not True: return False                
+        if not self.check_time(): return False
+        if not self.check_state(): return False                
         x_player = self.get_x_player()
         x_chest = self.get_x_chest()
         if np.sum(np.abs(x_player - x_chest)) == 1:

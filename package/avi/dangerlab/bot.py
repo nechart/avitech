@@ -64,6 +64,7 @@ class Bot(Thread):
         
     def run(self):
         while(True):
+                print(self.game.state)
             if not self.game.check_state():
                 print('bot break') 
                 return
