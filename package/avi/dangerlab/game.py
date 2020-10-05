@@ -22,6 +22,7 @@ class DangerLabirintGame:
         self.best_steps  = 100 # лучший результат!
         self.bot = None
         self.player_steps = 0
+        self.bot_mode = False
             
     def init_images(self):   
         self.im_player = Image.from_file(path + '/images/player.jpg')
@@ -311,17 +312,24 @@ class DangerLabirintGame:
             self.guard_objects.append(guard)
             guard.start()
         self.draw_map_fog()    
+
+        if self.bot_mode:
+            if (self.bot is None):
+                print('Бот не активирован!')
+                self.stop(b)
+                return
+            self.create_bot()
+
         self.output.clear_output()
 
     def start_bot(self, b):
-        if (self.bot is None):
-            print('Бот не активирован!')
-            self.stop(b)
-            return
+        self.bot_mode = True
         self.start(b)
+
+    def create_bot(self):
         Bot(self).start()
-        self.output.clear_output()
-        
+
+
     def stop(self, b):        
         self.state = player_state.loss
         self.update_game_status()        
@@ -333,14 +341,13 @@ class DangerLabirintGame:
 
 
 class DangerLabirintGameMap(DangerLabirintGame):
-    def start_bot(self, b):
-        if (self.bot is None):
-            print('Бот не активирован!')
-            self.stop(b)
-            return
-        self.start(b)
+    def create_bot(self, b):
         BotMap(self).start()
-        self.output.clear_output()
+
+    def set_bot(self, bot, debug_bot = False):
+        "передача функции с ботом типа bot(obj_up, obj_down, obj_left, obj_right, level_map, row, col)"
+        self.bot = bot
+        self.debug_bot = debug_bot
 
 
 if __name__ == "__main__":
