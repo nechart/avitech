@@ -42,7 +42,7 @@ class Bot(Thread):
         dirs['right'] = x_player_dir.copy()
         
         try:
-            self._run_bot_function(obj_up, obj_down, obj_left, obj_right)
+            action = self._run_bot_function(obj_up, obj_down, obj_left, obj_right)
         except Exception as e:
             print(e)
             action = ""
