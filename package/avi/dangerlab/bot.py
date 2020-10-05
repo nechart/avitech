@@ -80,4 +80,5 @@ class BotMap(Bot):
         super(BotMap, self).__init__(game)
 
     def _run_bot_function(self, obj_up, obj_down, obj_left, obj_right):
-        return self.game.bot(obj_up, obj_down, obj_left, obj_right, self.game.state == player_state.hide, self.level_map)
+        x_player = self.game.get_x_player()
+        return self.game.bot(obj_up, obj_down, obj_left, obj_right, self.game.state == player_state.hide, self.level_map, x_player[0], x_player[1])
