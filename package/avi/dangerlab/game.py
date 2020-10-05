@@ -190,7 +190,7 @@ class DangerLabirintGame:
         return x_player
     
     def check_state(self):
-        return self.state not in [player_state.win, player_state.loss]
+        return not self.state in [player_state.win, player_state.loss]
     
     def check_time(self):
         if (datetime.datetime.now() - self.last_click).total_seconds() < self.time_lag: return False

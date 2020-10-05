@@ -64,7 +64,8 @@ class Bot(Thread):
         
     def run(self):
         while(True):
-            if self.game.check_state() is not True: 
+            if not self.game.check_state():
+                print('bot break') 
                 return
             self.bot_move()
             sleep(self.bot_time_lag)
@@ -85,11 +86,3 @@ class BotMap(Bot):
     def _run_bot_function(self, obj_up, obj_down, obj_left, obj_right):
         x_player = self.game.get_x_player()
         return self.game.bot(obj_up, obj_down, obj_left, obj_right, self.game.state == player_state.hide, self.level_map, x_player[0], x_player[1])
-
-    def run(self):
-        while(True):
-            if self.game.check_state() is not True: 
-                self.init_map()
-                return
-            self.bot_move()
-            sleep(self.bot_time_lag)
