@@ -78,7 +78,7 @@ class DangerLabirintGame:
         guard_spawns = []
         if (self.guard_count > len(list_spawns)): 
             raise ValueError("Ошибка в настройках уровня {}. Слишком много стражей".format(self.cur_level))
-        for i_guard in range(0, self.guard_count):
+        for _ in range(0, self.guard_count):
             guard_spawn = random.choice(list_spawns)
             list_spawns = list(set(list_spawns) - set([guard_spawn]))
             guard_spawns.append(guard_spawn)
@@ -341,7 +341,7 @@ class DangerLabirintGame:
 
 
 class DangerLabirintGameMap(DangerLabirintGame):
-    def create_bot(self, b):
+    def create_bot(self):
         BotMap(self).start()
 
     def set_bot(self, bot, debug_bot = False):
