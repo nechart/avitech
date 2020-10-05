@@ -13,3 +13,7 @@ pip3 install -e git+https://github.com/nechart/avitech#egg=version_subpkg&subdir
 git clone https://github.com/nechart/avitech
 cd avitech
 pip3 install --upgrade --force ./package
+
+# Update:
+cd avitech
+git pull https://github.com/nechart/avitech
