@@ -1,0 +1,2 @@
+# avitech
+Avitech study projects
