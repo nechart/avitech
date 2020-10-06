@@ -12,6 +12,7 @@ class Bot(Thread):
     def __init__(self, game):
         self.game = game
         self.bot_time_lag = 0.5
+        self.stop = False
         super(Bot, self).__init__()
 
     def _run_bot_function(self, obj_up, obj_down, obj_left, obj_right):
@@ -64,8 +65,7 @@ class Bot(Thread):
         
     def run(self):
         while(True):
-            print(self.game.state)
-            if not self.game.check_state():
+            if not self.game.check_state() or self.stop:
                 print('bot break') 
                 return
             self.bot_move()

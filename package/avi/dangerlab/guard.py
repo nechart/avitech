@@ -13,6 +13,7 @@ class Guard(Thread):
         self.game = game
         self.x_guard = x_guard
         self.guard_time_lag = 1.5
+        self.stop = False
         super(Guard, self).__init__()
 
     def guard_move(self):
@@ -57,7 +58,7 @@ class Guard(Thread):
         
     def run(self):
         while(True):
-            if self.game.check_state() is not True: 
+            if not self.game.check_state() or  self.stop: 
                 return
             #print('guard_move', self.game.state)
             if self.guard_move():

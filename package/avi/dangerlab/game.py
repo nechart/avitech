@@ -23,6 +23,7 @@ class DangerLabirintGame:
         self.bot = None
         self.player_steps = 0
         self.bot_mode = False
+        self.bot_object = None
             
     def init_images(self):   
         self.im_player = Image.from_file(path + '/images/player.jpg')
@@ -263,6 +264,9 @@ class DangerLabirintGame:
                         self.canvas.draw_image(self.imagedict[value], col * self.n_pixels, row * self.n_pixels)
 
     def update_game_status(self):
+        if not self.check_state():
+            self.stop_threads()
+
         self.label_step_counter.value = str(self.player_steps)
         if self.state == player_state.win:
             self.label_game_status.value = 'Победа!'
@@ -274,6 +278,13 @@ class DangerLabirintGame:
             self.label_game_status.value = 'Проигрыш (('
         else:       
             self.label_game_status.value = 'Идет игра...'
+
+    def stop_threads(self):
+        if self.bot_object is not None:
+            self.bot_object.stop = True
+
+        for guard in self.guard_objects:
+            guard.stop = True
                     
     def launch(self):
         self.cur_level = 1
@@ -327,8 +338,8 @@ class DangerLabirintGame:
         self.start(b)
 
     def create_bot(self):
-        Bot(self).start()
-
+        self.bot_object = Bot(self)
+        self.bot_object.start()
 
     def stop(self, b):        
         self.state = player_state.loss
@@ -342,7 +353,8 @@ class DangerLabirintGame:
 
 class DangerLabirintGameMap(DangerLabirintGame):
     def create_bot(self):
-        BotMap(self).start()
+        self.bot_object = BotMap(self)
+        self.bot_object.start()
 
     def set_bot(self, bot, debug_bot = False):
         "передача функции с ботом типа bot(obj_up, obj_down, obj_left, obj_right, level_map, row, col)"
