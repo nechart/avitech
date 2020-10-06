@@ -66,7 +66,6 @@ class Bot(Thread):
     def run(self):
         while(True):
             if not self.game.check_state() or self.stop:
-                print('bot break') 
                 return
             self.bot_move()
             sleep(self.bot_time_lag)
