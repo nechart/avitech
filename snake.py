@@ -26,6 +26,25 @@ def close_game():
             exit()
 
 while True:
+# controls
+    key = pygame.key.get_pressed()
+    if key[pygame.K_w]:
+        if dirs['W']:
+            dx, dy = 0, -1
+            dirs = {'W': True, 'S': False, 'A': True, 'D': True, }
+    if key[pygame.K_s]:
+        if dirs['S']:
+            dx, dy = 0, 1
+            dirs = {'W': False, 'S': True, 'A': True, 'D': True, }
+    if key[pygame.K_a]:
+        if dirs['A']:
+            dx, dy = -1, 0
+            dirs = {'W': True, 'S': True, 'A': True, 'D': False, }
+    if key[pygame.K_d]:
+        if dirs['D']:
+            dx, dy = 1, 0
+            dirs = {'W': True, 'S': True, 'A': False, 'D': True, }
+
 #    surface.blit(img, (0, 0))
     # drawing snake, apple
     [pygame.draw.rect(surface, pygame.Color('green'), (i, j, SIZE - 1, SIZE - 1)) for i, j in snake]
@@ -55,21 +74,3 @@ while True:
     pygame.display.flip()
     clock.tick(fps)
     close_game()
-    # controls
-    key = pygame.key.get_pressed()
-    if key[pygame.K_w]:
-        if dirs['W']:
-            dx, dy = 0, -1
-            dirs = {'W': True, 'S': False, 'A': True, 'D': True, }
-    if key[pygame.K_s]:
-        if dirs['S']:
-            dx, dy = 0, 1
-            dirs = {'W': False, 'S': True, 'A': True, 'D': True, }
-    if key[pygame.K_a]:
-        if dirs['A']:
-            dx, dy = -1, 0
-            dirs = {'W': True, 'S': True, 'A': True, 'D': False, }
-    if key[pygame.K_d]:
-        if dirs['D']:
-            dx, dy = 1, 0
-            dirs = {'W': True, 'S': True, 'A': False, 'D': True, }

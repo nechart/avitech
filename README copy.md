@@ -1,2 +1,0 @@
-# avitech
-Avitech learning package
