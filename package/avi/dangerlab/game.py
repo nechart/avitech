@@ -15,6 +15,7 @@ from .guard import Guard as Guard
 from .bot import Bot as Bot
 from .bot import BotMap as BotMap
 from .levels import levels as levels
+from .levels import levels_task as levels_task
 
 path = str(pathlib.Path(__file__).parent.absolute())
 class DangerLabirintGame:
@@ -361,6 +362,85 @@ class DangerLabirintGameMap(DangerLabirintGame):
         self.bot = bot
         self.debug_bot = debug_bot
 
+class DLGameTask(DangerLabirintGameMap):
+    def move(self, dir):
+        # dir: right, left, down, up
+        sleep(0.5)
+        x_player = self.get_x_player()
+        if dir == 'up':
+            x_player[0] -= 1
+        elif dir == 'down':
+            x_player[0] += 1
+        elif dir == 'left':
+            x_player[1] -= 1
+        elif dir == 'right':
+            x_player[1] += 1
+        return self.player_move(x_player)
+    
+    def hide(self):
+        sleep(0.5)
+        self.player_hide()
+
+    def pick(self):
+        sleep(0.5)
+        self.player_pick()
+
+    def get_pos(self):
+        return self.get_x_player()
+
+    def get_objs(self):
+        x_player = self.get_x_player()
+        x_player_dir = x_player.copy()
+        x_player_dir[0] -= 1
+        obj_up = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+        
+        x_player_dir = x_player.copy()
+        x_player_dir[0] += 1
+        obj_down = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        x_player_dir = x_player.copy()
+        x_player_dir[1] -= 1
+        obj_left = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        x_player_dir = x_player.copy()
+        x_player_dir[1] += 1
+        obj_right = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        return [obj_up, obj_down, obj_left, obj_right]
+
+    def run_task(self, task):
+        # загрузить карту задачи (по справочнику)
+        _level_task = levels_task[task]
+        _levels = {1:_level_task}
+        self.set_levels(_levels)
+        # запустить задачу без меню справа (кнопок)
+        self.launch()
+        self.start()
+        # выдать: задача пройдена!
+
+    def update_game_status(self):
+        if not self.check_state():
+            self.stop_threads()
+
+        if self.state == player_state.win:
+            print('Задача решена! Переходи к следующей...')
+        elif self.state == player_state.loss:       
+            print('Не получилось... Попробуй еще раз?')
+        else:       
+            self.label_game_status.value = 'Идет игра...'
+
+    def launch(self):
+        self.cur_level = 1
+        self.init_map()
+        self.init_images()
+        self.create_panel()
+
+        multi = MultiCanvas(2, width=self.map_size * self.n_pixels, height=self.map_size * self.n_pixels)
+        multi[0].fill_style = 'black'
+        multi[0].fill_rect(0, 0, multi.size[0], multi.size[1])
+        self.canvas = multi[1]
+        self.output = widgets.Output()
+        display(VBox([Image.from_file(path + '/images/header.jpg', width=200,height=40), HBox([multi])]), self.output)        
 
 if __name__ == "__main__":
     game = DangerLabirintGame()

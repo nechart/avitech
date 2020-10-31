@@ -2,9 +2,15 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "..\\..\\Users\\Артем\\Desktop\\AdventuresInMinecraft-PC\\MyAdventures"
+		},
+		{
+			"path": "..\\..\\Users\\Артем\\Desktop\\AdventuresInMinecraft-PC"
 		}
 	],
 	"settings": {
-		"python.dataScience.jupyterServerURI": "local"
+		"python.dataScience.jupyterServerURI": "http://localhost:8888/?token=c5a8dd5e8aaf10f1396f318c677faf6950ffe7e135ebd276"
 	}
 }
