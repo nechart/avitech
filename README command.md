@@ -1,6 +1,7 @@
 cd C:\GIT\avitech\package
 python setup.py sdist
-pip install --upgrade --force avitech --no-index --find-links --no-cache-dir C:\GIT\avitech\package\dist
+pip install --upgrade --force avitech --no-index --find-links --no-cache-dir C:\GIT\avitech
+pip install --upgrade --force avitech --no-index --find-links --no-cache-dir C:\GIT\avitech\package
 # На сервере:
 pip3 install --upgrade --force /home/artem/avitech/package
 
@@ -17,3 +18,15 @@ pip3 install --upgrade --force ./package
 # Update:
 cd avitech
 git pull https://github.com/nechart/avitech
+
+# Postgres
+version: linux 9.2 win 9.6 (5432)
+https://itproffi.ru/ustanovka-postgresql-na-centos-7/
+https://khashtamov.com/ru/postgresql-python-psycopg2/
+postgres
+pass: nartPos_80
+create user jupyter with password 'jupMaxim80';
+jupyter
+jupMaxim80
+database:  labdb
+

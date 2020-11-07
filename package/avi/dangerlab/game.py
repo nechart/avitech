@@ -385,8 +385,40 @@ class DLGameTask(DangerLabirintGameMap):
         sleep(0.5)
         self.player_pick()
 
+    def get_guard_pos(self):
+        # позиция стража
+        return tuple(self.get_x_guard())
+
+    def get_chest_pos(self):
+        # позиция сокровища
+        return tuple(self.get_x_chest())
+
     def get_pos(self):
-        return self.get_x_player()
+        # позиция игрока
+        return tuple(self.get_x_player())
+
+    def get_obj_dict(self):
+        # осмотреться
+        objs = {}
+        x_player = self.get_x_player()
+        x_player_dir = x_player.copy()
+        x_player_dir[0] -= 1
+        objs['up'] = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+        
+        x_player_dir = x_player.copy()
+        x_player_dir[0] += 1
+        objs['down'] = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        x_player_dir = x_player.copy()
+        x_player_dir[1] -= 1
+        objs['left'] = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        x_player_dir = x_player.copy()
+        x_player_dir[1] += 1
+        objs['right'] = obj.wall if not self.check_x(x_player_dir, True) else self.lab_map[x_player_dir[0], x_player_dir[1]]
+
+        return objs
+
 
     def get_objs(self):
         x_player = self.get_x_player()

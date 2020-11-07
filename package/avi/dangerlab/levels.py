@@ -49,6 +49,13 @@ level_search_diag_map =\
  [0,0,0,1,1],
  [0,0,0,1,3]] 
 
+level_search_grid_map =\
+[[2,1,1,1,1],
+ [1,0,1,0,3],
+ [1,1,1,1,1],
+ [1,0,1,0,1],
+ [1,1,1,3,3]] 
+
 level_search_empty_enemy_map =\
 [[2,1,1,1,1],
  [1,1,3,1,1],
@@ -58,10 +65,12 @@ level_search_empty_enemy_map =\
 
 levels_task = { 'search_border':[level_search_border_map, 0],
                 'search_empty':[level_search_empty_map, 0],
-                'search_diag':[level_search_empty_map, 0],
+                'search_diag':[level_search_diag_map, 0],
+                'search_grid':[level_search_grid_map, 0],
                 'search_empty_enemy':[level_search_empty_enemy_map, 3],
                 'level1':[level1_map, 1],
                 'level2':[level2_map, 1],
                 'level3':[level3_map, 3],
                 'level4':[level4_map, 2]
     }
+

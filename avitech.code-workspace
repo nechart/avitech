@@ -11,6 +11,6 @@
 		}
 	],
 	"settings": {
-		"python.dataScience.jupyterServerURI": "http://localhost:8888/?token=c5a8dd5e8aaf10f1396f318c677faf6950ffe7e135ebd276"
+		"python.dataScience.jupyterServerURI": "local"
 	}
 }
