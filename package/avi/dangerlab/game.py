@@ -186,9 +186,9 @@ class DangerLabirintGame:
         x_player = np.array([x_player[0][0], x_player[1][0]])
         return x_player
 
-    def get_x_guard(self):
+    def get_x_guard(self, i_guard = 0):
         x_player = np.where(self.lab_map == obj.guard)
-        x_player = np.array([x_player[0][0], x_player[1][0]])
+        x_player = np.array([x_player[0][i_guard], x_player[1][i_guard]])
         return x_player
     
     def check_state(self):
@@ -388,6 +388,14 @@ class DLGameTask(DangerLabirintGameMap):
     def get_guard_pos(self):
         # позиция стража
         return tuple(self.get_x_guard())
+
+    def get_many_guards_pos(self):
+        # позиция стражей
+        poses = []
+        for i_guard in range(self.guard_count):
+            poses.append(tuple(self.get_x_guard(i_guard)))
+        return poses
+       
 
     def get_chest_pos(self):
         # позиция сокровища
