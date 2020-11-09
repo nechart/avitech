@@ -134,7 +134,7 @@ class Drawer(Thread):
 
         self.label_game_status = Label('Подключение к серверу...')
         
-        self.panel_users = GridBox(children=[], layout=Layout(grid_template_columns="120px 50px"))
+        self.panel_users = GridBox(children=[], layout=Layout(grid_template_columns="80px 80px 30px"))
 
         # панель запуска-остановки-паузы
         #b_play = Button(description='ИГРА',icon = 'fa-play', layout = items_layout)
@@ -143,10 +143,8 @@ class Drawer(Thread):
         #b_play.on_click(self.client.start) # client.start) 
         b_stop.on_click(self.client.stop) 
 
-        panel = VBox([HBox([Label('Сервер:'), Label(self.client.server['name'])]),
-                          HBox([Label('Игрок:'),Label(self.client.user_name)]),
-                          b_stop,  #      HBox([b_play, b_stop]),
-                          self.label_game_status,
+        panel = VBox([HBox([Label('Сервер:'), Label(self.client.server['name']), self.label_game_status]),
+                          HBox([Label('Игрок:'),Label(self.client.user_name), b_stop]),
                           self.panel_users],
                       layout=box_layout)    
         return panel          
@@ -156,14 +154,17 @@ class Drawer(Thread):
         if self.label_game_status.value != state_caption:
             self.label_game_status.value = state_caption
         user_scores = {}
+        user_ava = {}
         for user_rec in self.users:
             user_scores[user_rec['name']] = user_rec['score'] - user_rec['kills']*3
+            user_ava[user_rec['name']] = user_rec['avatar']
         changed = user_scores.values() != self.user_scores.values() if not self.user_scores is None else True
 
         if changed:
             items = []
             for user_name, score in sorted(user_scores.items(), key=lambda x: x[1], reverse = True) :
                 items.append(Label(user_name))
+                items.append(Label(user_ava[user_rec['name']]))
                 items.append(Label(str(score)))
             self.panel_users.children = items
             self.user_scores = user_scores
@@ -209,6 +210,8 @@ class Drawer(Thread):
                                         self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)            
                                     elif user_i['state'] == player_state.killed:
                                         self.canvas.draw_image(self.image_killed, col * CELL_PIXELS, row * CELL_PIXELS)            
+                                    elif user_i['state'] == player_state.inactive:
+                                        self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)
                         elif cell['obj'] in [obj.chest, obj.guard]:                                    
                             self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)
                         elif cell['obj'] == obj.space:                                                                
