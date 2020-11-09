@@ -103,7 +103,7 @@ class EventQueue(Thread):
                                 map.change_cells(self.server.id, (user_rec['row'], user_rec['col']), (cell['row'], cell['col']), self.server.con)
                                 user_rec['row'] = cell['row']
                                 user_rec['col'] = cell['col']
-                                user_rec['score'] += 1
+                                user_rec['score'] += 1 if cell['image'] == ava_chest.chest1 else 2
                                 user_rec['state'] = player_state.active
                                 user.update_user(user_rec, con=self.server.con)
                                 self.server.chests.remove((cell['row'], cell['col']))
