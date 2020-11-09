@@ -164,7 +164,7 @@ class Drawer(Thread):
             items = []
             for user_name, score in sorted(user_scores.items(), key=lambda x: x[1], reverse = True) :
                 items.append(Label(user_name))
-                items.append(Label(user_ava[user_rec['name']]))
+                items.append(Label(user_ava[user_name]))
                 items.append(Label(str(score)))
             self.panel_users.children = items
             self.user_scores = user_scores
