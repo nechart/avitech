@@ -70,7 +70,7 @@ class Client():
 
     def send_event(self, act=action.spawn):
         self.refresh_user()
-        if self.user['state'] != player_state.active and act != action.spawn:
+        if self.user['state'] in [player_state.inactive, player_state.killed]  and act != action.spawn:
             return action_state.rejected
 
         return event.send_event(self.server['id'], self.userid, act, self.con)
@@ -112,6 +112,7 @@ class Drawer(Thread):
 
         for ava in avatars:
             self.images_ava[(obj.player, ava)] = Image.from_file(path + '/images/avatar/{}.png'.format(ava))
+            self.images_ava_hide[ava] = Image.from_file(path + '/images/avatar/{}_h.png'.format(ava))            
 
         for ava in ava_guard.items():
             self.images_ava[(obj.guard, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
@@ -150,7 +151,7 @@ class Drawer(Thread):
         return panel          
         
     def update_panel(self, b=None):
-        state_caption = 'Сервер активен' if self.client.server['state'] == server_state.active else 'Сервер остановлен'
+        state_caption = 'Активен' if self.client.server['state'] == server_state.active else 'Остановлен'
         if self.label_game_status.value != state_caption:
             self.label_game_status.value = state_caption
         user_scores = {}
@@ -205,8 +206,10 @@ class Drawer(Thread):
                             for user_i in self.users:
                                 if user_i['id'] == cell['userid']:
                                     if user_i['state'] == player_state.hide:
+                                        self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)
                                         self.canvas.draw_image(self.images_ava_hide[cell['image']], col * CELL_PIXELS, row * CELL_PIXELS)
                                     elif user_i['state'] == player_state.active:
+                                        self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)
                                         self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)            
                                     elif user_i['state'] == player_state.killed:
                                         self.canvas.draw_image(self.image_killed, col * CELL_PIXELS, row * CELL_PIXELS)            
@@ -236,6 +239,7 @@ class Drawer(Thread):
     def run(self):
         while(True):
             if not self.client.check_state() or self.stop: 
+                self.label_game_status.value = 'Остановлен'
                 self.output.clear_output()
                 return
             self.redraw()
