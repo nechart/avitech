@@ -41,6 +41,7 @@ def find_cell(serverid=0, row=0, col=0, con=None):
     return rec
 
 
+
 @connection
 def find_round(cursor='', serverid=0, row=0, col=0, con=None):
     find_sql = '''SELECT * FROM maps WHERE serverid = {0} and row >= {1} and row <= {2} and col >= {3} and col <= {4};'''.format(serverid, row-1, row+1, col-1, col+1)
@@ -65,3 +66,4 @@ def update_cells(cell_recs=[], con=None):
     for rec in cell_recs:
         update_cell(rec, con)
     return cell_recs
+

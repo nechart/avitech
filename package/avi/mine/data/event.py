@@ -10,11 +10,13 @@
         state     integer
     """
 from time import gmtime, strftime
+from time import sleep
 
 
 from .base import *
 from ..enums import *
 TABLE = 'events'
+EVENT_WAIT_LAG = 0.2
 
 def find_event(eventid, con=None):
     wheres = {'id': eventid}
@@ -31,6 +33,9 @@ def find_events(serverid=0, state=action_state.to_process, con=None):
 def update_event(row={}, con=None):
     return update(table_name = TABLE, row=row, con=con)
 
+def delete_events(serverid=0, con=None):
+    wheres = {'serverid': serverid}
+    return delete(table_name = TABLE, wheres=wheres, con=con)
 
 def insert_event(serverid=0, userid=0, action=action.spawn, con=None):
     rec = {}
@@ -42,3 +47,13 @@ def insert_event(serverid=0, userid=0, action=action.spawn, con=None):
     rec['state']=action_state.to_process
 
     return insert(table_name = TABLE, row=rec, con=con)
+
+def send_event(serverid=0, userid=0, action=action.spawn, con=None):
+    eventid = insert_event(serverid=serverid, userid=userid, action=action, con=con)
+    event_rec = None
+    while True:
+        sleep(EVENT_WAIT_LAG)
+        event_rec = find_event(eventid, con)
+        if event_rec['state'] >= action_state.processed:
+            break
+    return event_rec['state']

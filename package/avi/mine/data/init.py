@@ -40,6 +40,7 @@ def create_tables(cursor, con=None):
         login_dt timestamp,
         score  integer,
         kills  integer,
+        kill_dt timestamp,
         state  integer,
         row    integer,
         col    integer        

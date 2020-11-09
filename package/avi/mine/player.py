@@ -22,7 +22,7 @@ class Player():
 
     def play(self):
         # запустить игру
-        return self.client.start()
+        self.client.start()
 
     def move_right(self):
         # идти вправо
@@ -39,6 +39,18 @@ class Player():
     def move_down(self):
         # идти вниз
         return self.client.make_action(action.move_down) 
+
+    def move(self, dir):
+        # двигаться. dir: right, left, down, up
+        if dir == 'up':
+            return self.move_up()
+        elif dir == 'down':
+            return self.move_down()
+        elif dir == 'left':
+            return self.move_left()
+        elif dir == 'right':
+            return self.move_right()
+        return False
 
     def pick(self):
         # взять сокровище
@@ -65,3 +77,27 @@ class Player():
         for cell in cells:
             chests.append((cell['row'], cell['col']))
         return chests
+
+    def get_guards(self):
+        # получить список координат стражей [(row1, col1), (row2, col2)]
+        cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.guard, con=self.client.con)
+        chests = []
+        for cell in cells:
+            chests.append((cell['row'], cell['col']))
+        return chests        
+
+    def get_players(self):
+        # получить список координат игроков [(row1, col1), (row2, col2)]
+        cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.player, con=self.client.con)
+        chests = []
+        for cell in cells:
+            chests.append((cell['row'], cell['col']))
+        return chests                
+
+    def get_walls(self):
+        # получить список координат препятствий [(row1, col1), (row2, col2)]
+        cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.wall, con=self.client.con)
+        chests = []
+        for cell in cells:
+            chests.append((cell['row'], cell['col']))
+        return chests                        

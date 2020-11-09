@@ -4,14 +4,14 @@ from psycopg2.extensions import AsIs
 DB = "labdb"
 
 def connect(db=DB):
-    return psycopg2.connect(user = "postgres", password = "nartPos_80", database = DB) 
+    return psycopg2.connect(user = "jupyter", password = "jupMaxim80", database = DB) 
 
 def connection(func):
     def wrapper(*args, **kwargs):
         try:
             con = kwargs.get("con") if 'con' in kwargs else None
             if con is None:
-                con = psycopg2.connect(user = "postgres", password = "nartPos_80", database = DB) 
+                con = connect()
             cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
             ret = func(cursor, *args, **kwargs)
         except (Exception, psycopg2.Error) as error :
@@ -30,7 +30,7 @@ def connection_commit(func):
         try:
             con = kwargs.get("con") if 'con' in kwargs else None
             if con is None:
-                con = psycopg2.connect(user = "postgres", password = "nartPos_80", database = DB)
+                con = connect()
             cursor = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
             ret = func(cursor, *args, **kwargs)
             con.commit()
@@ -48,7 +48,7 @@ def connection_commit(func):
 
 def connection_test(func):
     def wrapper(*args, **kwargs):
-        connection = psycopg2.connect(user = "postgres", password = "nartPos_80", database = DB)
+        connection = connect()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
         ret = func(cursor, *args, **kwargs)
         if(connection):
@@ -60,7 +60,7 @@ def connection_test(func):
 
 def connection_commit_test(func):
     def wrapper(*args, **kwargs):
-        connection = psycopg2.connect(user = "postgres", password = "nartPos_80", database = DB)
+        connection = connect()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
         ret = func(cursor, *args, **kwargs)
         connection.commit()

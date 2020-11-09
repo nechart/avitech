@@ -42,6 +42,8 @@ from .data import event
 from .guard import Guard as Guard
 from .event_queue import EventQueue as EventQueue
 
+EVENT_WAIT_LAG = 0.2
+
 class Server():
     def __init__(self, server_name):
         self.con = base.connect()
@@ -59,12 +61,12 @@ class Server():
 
         user.delete_users(self.id, con=self.con)
 
+        event.delete_events(self.id)
+
         map.recreate_map(serverid=self.id, levelmap=self.config['map'], con=self.con)
         #self.map = self.get_map()
         self.chests = []
-
-        for _ in range(self.config['chests']):
-            event.insert_event(serverid=self.id, userid=-1, action=action.spawn_chest, con=self.con)
+        self.guards = []
 
     def launch(self):
         self.server['state'] = server_state.active
@@ -72,11 +74,16 @@ class Server():
         self.server['start_dt'] = logintime
         update_server(self.server, con=self.con)
 
-        #self.start_guards()
+        for _ in range(self.config['chests']):
+            event.insert_event(serverid=self.id, userid=-1, action=action.spawn_chest, con=self.con)
+
         self.queue = EventQueue(self)
+
         self.queue.start()
 
         print('Сервер {} запущен c ID {}'.format(self.server_name, self.id))
+
+        self.start_guards()
 
         return True
 
@@ -93,19 +100,21 @@ class Server():
         logintime = strftime("%Y-%m-%d %H:%M:%S", gmtime())    
         self.server['stop_dt'] = logintime
         update_server(self.server, con=self.con)
-        #self.stop_guards()        
+        self.stop_guards()        
         self.queue.stop = True
         return True
 
     def start_guards(self):
-        self.guard_objects = []
-        for x_guard in range(self.config['guards']):
-            guard = Guard(self, x_guard)
-            self.guard_objects.append(guard)
-            guard.start()
+        self.guards = []
+        for guardid in range(self.config['guards']):
+            state = event.send_event(serverid=self.id, userid=guardid, action=action.spawn_guard, con=self.con)
+            if state == action_state.processed:
+                guard = Guard(self, guardid)
+                self.guards.append(guard)
+                guard.start()
 
     def stop_guards(self):
-        for guard in self.guard_objects:
+        for guard in self.guards:
             guard.stop = True
 
 

@@ -6,61 +6,48 @@ import random
 
 from . import server
 from .enums import *
+from . import map
+from .data import event
+from .data import user
 
+EVENT_TIME_LAG = 1.5
+dir2action = {  'up':action.guard_move_up, 
+                'down':action.guard_move_down, 
+                'left':action.guard_move_left, 
+                'right':action.guard_move_right,                                 
+            }
 
 class Guard(Thread):
-    def __init__(self, game, x_guard):
-        self.game = game
-        self.x_guard = x_guard
-        self.guard_time_lag = 1.5
+    def __init__(self, server, guardid):
+        self.server = server
+        self.guardid = guardid
         self.stop = False
         super(Guard, self).__init__()
 
-    def guard_move(self):
-        #1 проверить, что игрок рядом. если да - съесть
-        x_player = self.game.get_x_player()
-        if np.sum(np.abs(x_player - self.x_guard)) == 1 and self.game.state == player_state.show:
-            # съесть можно только после 1 секунды от хода игрока
-            if (datetime.datetime.now() - self.game.last_click).total_seconds() < self.guard_time_lag: return False
-            # если спрятался, выграл или уже проиграл, то ничего не делать
-            self.game.lab_map[self.x_guard[0], self.x_guard[1]] = obj.space
-            self.game.state = player_state.loss
-            self.game.update_game_status()
-            return True
-        # пойти рандомом в любую возможную сторону
-        else:
-            plans = []
-            x_guard_plan = self.x_guard.copy()
-            x_guard_plan[0] += 1
-            if self.game.check_x(x_guard_plan):
-                plans.append(x_guard_plan)
-            x_guard_plan = self.x_guard.copy()
-            x_guard_plan[0] -= 1
-            if self.game.check_x(x_guard_plan):
-                plans.append(x_guard_plan)
-            x_guard_plan = self.x_guard.copy()
-            x_guard_plan[1] += 1
-            if self.game.check_x(x_guard_plan):
-                plans.append(x_guard_plan)
-            x_guard_plan = self.x_guard.copy()
-            x_guard_plan[1] -= 1
-            if self.game.check_x(x_guard_plan):
-                plans.append(x_guard_plan)
-            if len(plans) == 0: return False # некуда ходить (из-за других стражей например)
-            
-            plan_choiced = random.randint(0, len(plans) - 1)
-            x_guard_plan = plans[plan_choiced]
-            self.game.lab_map[self.x_guard[0], self.x_guard[1]] = obj.space
-            self.game.lab_map[x_guard_plan[0], x_guard_plan[1]] = obj.guard
-            self.x_guard = x_guard_plan.copy()
-            #print(self.x_guard)
-            return True
+    def do_action(self):
+        self.cell = map.get_guard_cell(self.server.id, self.guardid, self.server.con)
+
+        objs = map.get_objs(self.server.server, self.cell['row'], self.cell['col'], self.server.con)
         
+        state = None
+        if obj.player in objs.values(): #1 проверить, что игрок рядом. если да - съесть
+            for cell in map.find_round(self.server.id, self.cell['row'], self.cell['col'], self.server.con):
+                if cell['obj'] == obj.player:
+                    user_rec = user.find_user(cell['userid'], self.server.con)
+                    if user_rec['state'] == player_state.active: # ловим только видимого
+                        state = event.send_event(self.server.id, self.guardid, action.guard_kill, self.server.con)
+                        break
+        if state is None:  # пойти рандомом в любую возможную сторону
+            dirs = [k for k,v in objs.items() if v == obj.space]
+            if len(dirs) > 0: # некуда ходить (из-за других стражей например)
+                dir_plan = random.choice(dirs)
+                state = event.send_event(self.server.id, self.guardid, dir2action[dir_plan], self.server.con)
+
+        return state
     def run(self):
         while(True):
-            if not self.game.check_state() or  self.stop: 
+            if not self.server.check_state() or self.stop: 
                 return
-            #print('guard_move', self.game.state)
-            if self.guard_move():
-                self.game.draw_map_fog()
-            sleep(self.guard_time_lag)
+            self.do_action()
+
+            sleep(EVENT_TIME_LAG)

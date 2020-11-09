@@ -54,4 +54,6 @@ mlevel_diag =\
 ] 
 
 
-levels = {'empty':{'map': mlevel_empty, 'guards':0, 'chests':10}}
+levels = {'empty':{'map': mlevel_empty, 'guards':0, 'chests':10},
+          '4cubes':{'map': mlevel_4cubes, 'guards':3, 'chests':5},
+          'crest':{'map': mlevel_crest, 'guards':10, 'chests':5}}

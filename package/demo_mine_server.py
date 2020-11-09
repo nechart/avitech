@@ -3,6 +3,7 @@ from avi.mine.levels import levels as levels
 import avi.mine.data.init as data_init
 import avi.mine.server as server
 import avi.mine.player as player
+import avi.mine.map as map
 from avi.mine.data.base import connect as connect
 from avi.mine.enums import *
 
@@ -10,9 +11,16 @@ from avi.mine.enums import *
 #data_init.drop_tables(con)
 #data_init.create_tables(con)
 #con.close()
-server = server.Server.create('empty')
-server.init_map(config=levels['empty'])
+#exit()
+#servername = '4cubes'
+servername = 'crest'
+server = server.Server.create(servername)
+server.init_map(config=levels[servername])
 server.launch()
+
+#m = map.find_all(server.id)
+#print(m)
+#exit(1)
 
 def test_client():
     game = player.Player('empty', avatar.lord) 

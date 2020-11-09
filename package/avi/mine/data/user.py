@@ -21,8 +21,14 @@ def find_user(userid=0, con=None):
     return user_rec
 
 
-def find_or_create_user(serverid=0, username='', ava='', con=None):
-    wheres = {'serverid': serverid, 'name': username, 'avatar':ava}
+def find_all_users(serverid=0, con=None):
+    wheres = {'serverid': serverid}
+    user_set = find_many(table_name = TABLE, wheres = wheres, con=con)
+    return user_set
+
+
+def find_or_create_user(serverid=0, username='', con=None):
+    wheres = {'serverid': serverid, 'name': username}
     user_rec = find(table_name = TABLE, wheres = wheres, con=con)
     if user_rec is None:
         user_rec = insert(table_name = TABLE, row = wheres, con=con)
