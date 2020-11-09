@@ -118,11 +118,9 @@ class Drawer(Thread):
 
         for ava in ava_chest.items():
             self.images_ava[(obj.chest, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
-
         self.images_ava[(obj.wall, '')] = Image.from_file(path + '/images/wall.jpg')
-
         self.image_killed = Image.from_file(path + '/images/player_loss.png')
-
+        self.image_space = Image.from_file(path + '/images/space.jpg')
 
     def create_panel(self):
         # images button https://fontawesome.com/v4.7.0/icons/
@@ -197,39 +195,40 @@ class Drawer(Thread):
                         self.canvas_base.draw_image(self.images_ava[(obj.wall, '')], col * CELL_PIXELS, row * CELL_PIXELS)
         
     def redraw(self):
-        self.update_map()
-        with hold_canvas(self.canvas):
-            self.canvas.clear()
-            for row in range(len(self.map)):
-                for col in range(len(self.map[row])):
-                    cell = self.map[row][col]
-                    if cell['obj'] == obj.player:
-                        for user_i in self.users:
-                            if user_i['id'] == cell['userid']:
-                                if user_i['state'] == player_state.hide:
-                                    self.canvas.draw_image(self.images_ava_hide[cell['image']], col * CELL_PIXELS, row * CELL_PIXELS)
-                                elif user_i['state'] == player_state.active:
-                                    self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)            
-                                elif user_i['state'] == player_state.killed:
-                                    self.canvas.draw_image(self.image_killed, col * CELL_PIXELS, row * CELL_PIXELS)            
-                    elif cell['obj'] in [obj.chest, obj.guard]:                                    
-                        self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)
-
-        self.update_panel()
+        if self.update_map():
+            with hold_canvas(self.canvas):
+                for row in range(len(self.map)):
+                    for col in range(len(self.map[row])):
+                        cell = self.map[row][col]
+                        if cell['obj'] == obj.player:
+                            for user_i in self.users:
+                                if user_i['id'] == cell['userid']:
+                                    if user_i['state'] == player_state.hide:
+                                        self.canvas.draw_image(self.images_ava_hide[cell['image']], col * CELL_PIXELS, row * CELL_PIXELS)
+                                    elif user_i['state'] == player_state.active:
+                                        self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)            
+                                    elif user_i['state'] == player_state.killed:
+                                        self.canvas.draw_image(self.image_killed, col * CELL_PIXELS, row * CELL_PIXELS)            
+                        elif cell['obj'] in [obj.chest, obj.guard]:                                    
+                            self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)
+                        elif cell['obj'] == obj.space:                                                                
+                            self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)
+            self.update_panel()
                                        
     def update_map(self):
+        changed = False
         new_map = map.get_all(self.client.server, self.client.con)
         if self.map is None or self.map != new_map:
             self.map = new_map
+            changed = True
 
         new_users = find_all_users(self.client.server['id'], self.client.con)
         if self.users is None or self.users != new_users:
             self.users = new_users
-            
+            changed = True
         self.client.refresh_user()
-        
         self.client.refresh_server()
-
+        return changed
     
     def run(self):
         while(True):
