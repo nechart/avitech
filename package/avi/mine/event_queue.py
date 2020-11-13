@@ -146,5 +146,9 @@ class EventQueue(Thread):
         while(True):
             if not self.server.check_state() or self.stop: 
                 return
-            self.process_events()
-            sleep(EVENT_LAG_TIME)
+            try:
+                self.process_events()
+                sleep(EVENT_LAG_TIME)
+            except Exception as e: 
+                # logger.error('Failed to upload to ftp: '+ str(e))
+                print(str(e))

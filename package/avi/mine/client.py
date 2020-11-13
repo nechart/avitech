@@ -42,9 +42,7 @@ class Client():
         self.server = server.find_server(server_name, self.con)
         if self.server is None:
             raise ValueError('Сервер {} не найден'.format(server_name))
-        self.user = find_or_create_user(self.server['id'], self.user_name, self.con)
-        self.user['avatar'] = ava
-        update_user(self.user, self.con)
+        self.user = find_or_create_user(self.server['id'], self.user_name, ava, self.con)
         self.userid = self.user['id']
 
         if self.send_event(action.spawn) == action_state.processed:
@@ -238,14 +236,17 @@ class Drawer(Thread):
     
     def run(self):
         while(True):
-            if not self.client.check_state() or self.stop: 
-                self.label_game_status.value = 'Остановлен'
-                self.output.clear_output()
-                return
-            self.redraw()
+            try:
+                if not self.client.check_state() or self.stop: 
+                    self.label_game_status.value = 'Остановлен'
+                    self.output.clear_output()
+                    return
+                self.redraw()
 
-            if self.client.user['state'] == player_state.killed:
-                if (datetime.utcnow() - self.client.user['kill_dt']).total_seconds() >= KILL_LAG:
-                    event.send_event(self.client.server['id'], self.client.userid, action.spawn, self.client.con)
+                if self.client.user['state'] == player_state.killed:
+                    if (datetime.utcnow() - self.client.user['kill_dt']).total_seconds() >= KILL_LAG:
+                        event.send_event(self.client.server['id'], self.client.userid, action.spawn, self.client.con)
 
-            sleep(REDRAW_LAG)
+                sleep(REDRAW_LAG)
+            except Exception as e: 
+                pass

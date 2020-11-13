@@ -12,10 +12,11 @@ from avi.mine.enums import *
 #data_init.create_tables(con)
 #con.close()
 #exit()
-#servername = '4cubes'
-servername = 'crest'
+servername = '4cubes'
 server = server.Server.create(servername)
-server.init_map(config=levels[servername])
+config=levels[servername]
+config['guards'] = 1
+server.init_map(config)
 server.launch()
 
 #m = map.find_all(server.id)
