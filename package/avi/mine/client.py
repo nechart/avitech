@@ -78,7 +78,8 @@ class Client():
         #self.redraw()
         return state == action_state.processed
 
-    def start(self, b = None):
+    def start(self, autostop = False):
+        self.autostop = autostop
         if self.drawer != None:
             self.stop()    
         self.drawer = Drawer(self)
@@ -89,6 +90,8 @@ class Client():
 
     def stop(self, b = None):
         self.drawer.stop = True
+        if self.autostop:
+            raise Exception('Game over')
 
 ########################################################################################################################
 class Drawer(Thread):

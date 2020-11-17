@@ -20,9 +20,9 @@ class Player():
         self.client.refresh_server()
         return self.client.check_state()
 
-    def play(self):
+    def play(self, autostop = False):
         # запустить игру
-        self.client.start()
+        self.client.start(autostop)
 
     def move_right(self):
         # идти вправо
@@ -101,3 +101,47 @@ class Player():
         for cell in cells:
             chests.append((cell['row'], cell['col']))
         return chests                        
+
+    def get_dir(self, pos_goal):
+        """ Функция определения направления движения игрока
+        Параметры:
+        pos_user - кортеж с координатой игрока
+        pos_goal - кортеж с координатой цели
+        Возвращаемое значение:
+        dir - строка с кодом направления "up", "down", "left", "right"
+        """
+        pos_user = (self.client.user['row'], self.client.user['col'])
+        delta_row = pos_goal[0] - pos_user[0]    # вычислить разницу строк
+        delta_col = pos_goal[1] - pos_user[1]    # вычислить разницу столбцов
+        dir = ""
+        
+        if abs(delta_row) > abs(delta_col):  # если по вертикали идти больше, чем по горизонтали - идем вверх или вниз
+            if delta_row < 0:
+                dir = "up"
+            elif delta_row > 0:
+                dir = "down"
+        else:
+            if delta_col < 0:
+                dir = "left"
+            elif delta_col > 0:
+                dir = "right"
+                
+        return dir    
+    
+    def get_path(self, pos_goal = (0,0)):
+        """найти кратчайший путь с учетом препятствий
+        params:
+        pos_goal - координаты цели
+        return:
+        список ячеек, по которым следует идти
+        """
+        return map.find_path(self.client.server, (self.client.user['row'], self.client.user['col']), pos_goal, con=self.client.con)
+
+    def get_nearest(self, objects):
+        "Найти ближайший объект из списка"
+        import numpy
+        import builtins
+        pos = (self.client.user['row'], self.client.user['col'])
+        delta_pos = list(builtins.map(lambda x: tuple(numpy.subtract(x, pos)), objects))
+        deltas = list(builtins.map(lambda x:abs(x[0]) + abs(x[1]), delta_pos))
+        return objects[deltas.index(min(deltas))]

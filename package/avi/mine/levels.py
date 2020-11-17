@@ -53,7 +53,17 @@ mlevel_diag =\
  [0,1,1,1,1,1,1,1,1,0],
 ] 
 
+mlevel_closely =\
+[[1,1,1,1,1,1],
+ [1,1,1,1,1,1], 
+ [1,1,1,1,1,1], 
+ [1,1,1,1,1,1], 
+ [1,1,1,1,1,1], 
+ [1,1,1,1,1,1],     
+] 
 
 levels = {'empty':{'map': mlevel_empty, 'guards':0, 'chests':10},
           '4cubes':{'map': mlevel_4cubes, 'guards':3, 'chests':5},
-          'crest':{'map': mlevel_crest, 'guards':10, 'chests':5}}
+          'crest':{'map': mlevel_crest, 'guards':10, 'chests':5},
+          'close':{'map': mlevel_closely, 'guards':6, 'chests':3}
+          }
