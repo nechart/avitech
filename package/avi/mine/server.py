@@ -121,3 +121,14 @@ class Server():
     @staticmethod
     def create(server_name):
         return Server(server_name)
+
+
+    @staticmethod
+    def recreate_tables():
+        import avi.mine.data.init as data_init
+        from avi.mine.data.base import connect as connect
+
+        con = connect()
+        data_init.drop_tables(con)
+        data_init.create_tables(con)
+        con.close()

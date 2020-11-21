@@ -11,7 +11,9 @@ from avi.mine.enums import *
 #data_init.drop_tables(con)
 #data_init.create_tables(con)
 #con.close()
-#exit()
+server.Server.recreate_tables()
+exit()
+#
 servername = '4cubes'
 server = server.Server.create(servername)
 config=levels[servername]
