@@ -26,7 +26,7 @@ class EventQueue(Thread):
     def process_events(self):
         events = event.find_events(serverid=self.server.id, con=self.server.con)
         for event_rec in events:
-            print(datetime.datetime.now())
+            #print(datetime.datetime.now())
             self.set_processed(self.process_event(event_rec))
 
     def process_event(self, event_rec):
