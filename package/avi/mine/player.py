@@ -103,7 +103,8 @@ class Player():
             cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.guard, con=self.client.con)
             chests = []
             for cell in cells:
-                chests.append((cell['row'], cell['col']))
+                if cell['image'] != ava_guard.killed:
+                    chests.append((cell['row'], cell['col']))
             return chests        
         except:
             raise Exception("Игра прервана")
@@ -113,7 +114,9 @@ class Player():
         cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.player, con=self.client.con)
         chests = []
         for cell in cells:
-            chests.append((cell['row'], cell['col']))
+            user_rec = user.find_user(cell['userid'], self.server.con)
+            if user_rec['state'] == player_state.active:
+                chests.append((cell['row'], cell['col']))
         return chests                
 
     def get_walls(self):
