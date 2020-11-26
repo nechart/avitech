@@ -60,10 +60,6 @@ class EventQueue(mineEventQueue):
                     cell_orig['userid'] = -1
                     cell_orig['image'] = ''
                     map.update_cell(cell_orig, self.server.con)
-
-                    if cell and cell['obj'] in [obj.player, obj.guard]:
-                        user_orig_rec['score'] += 3
-                        user.update_user(user_orig_rec, con=self.server.con)
                     # попали в игрока
                     if cell and cell['obj'] == obj.player:
                         user_rec = user.find_user(cell['userid'], self.server.con)
@@ -72,6 +68,9 @@ class EventQueue(mineEventQueue):
                             user_rec['kill_dt'] = strftime("%Y-%m-%d %H:%M:%S", gmtime()) 
                             user_rec['state'] = player_state.killed
                             user.update_user(user_rec, con=self.server.con)
+
+                            user_orig_rec['score'] += 3
+                            user.update_user(user_orig_rec, con=self.server.con)
                     # попали в стража
                     elif cell and cell['obj'] == obj.guard:
                         guard = self.server.guards[cell['userid']]
@@ -80,6 +79,9 @@ class EventQueue(mineEventQueue):
                             guard.kill_dt =  datetime.utcnow()
                             cell['image'] = ava_guard.killed
                             map.update_cell(cell, self.server.con)
+
+                            user_orig_rec['score'] += 3
+                            user.update_user(user_orig_rec, con=self.server.con)
                     # попали в мяч
                     elif cell and cell['obj'] == obj.ball:
                         ball = self.server.balls.get(cell['userid'], None)
