@@ -48,11 +48,11 @@ def insert_event(serverid=0, userid=0, action=action.spawn, con=None):
 
     return insert(table_name = TABLE, row=rec, con=con)
 
-def send_event(serverid=0, userid=0, action=action.spawn, con=None):
+def send_event(serverid=0, userid=0, action=action.spawn, con=None, wait_lag = EVENT_WAIT_LAG):
     eventid = insert_event(serverid=serverid, userid=userid, action=action, con=con)
     event_rec = None
     while True:
-        sleep(EVENT_WAIT_LAG)
+        sleep(wait_lag)
         event_rec = find_event(eventid, con)
         if event_rec['state'] >= action_state.processed:
             break

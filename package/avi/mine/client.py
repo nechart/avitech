@@ -36,12 +36,23 @@ class Client():
     def __init__(self):
         self.user_name = getpass.getuser()
         self.drawer = None
+        self.server_obj = None
 
-    def connect(self, server_name, ava = avatar.cowboy):
+    def connect(self, server_name, ava = None):
         self.con = base.connect()
         self.server = server.find_server(server_name, self.con)
         if self.server is None:
             raise ValueError('Сервер {} не найден'.format(server_name))
+
+        if ava is None:
+            user_setup = find_user_setup(self.user_name, self.con)
+            if not user_setup is None:
+                ava = user_setup['avatar']
+            else:
+                raise Exception('Надо выбрать аватар')
+        else:
+            set_user_setup(self.user_name, ava, self.con)
+
         self.user = find_or_create_user(self.server['id'], self.user_name, ava, self.con)
         self.userid = self.user['id']
 
@@ -90,6 +101,8 @@ class Client():
 
     def stop(self, b = None):
         self.drawer.stop = True
+        if not self.server_obj is None:
+            self.server_obj.stop()
         if self.autostop:
             raise Exception('Game over')
 
@@ -117,10 +130,12 @@ class Drawer(Thread):
 
         for ava in ava_guard.items():
             self.images_ava[(obj.guard, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
+        self.images_ava[(obj.guard, ava_guard.killed)] = Image.from_file(path + '/images/{}.png'.format(ava_guard.killed))
 
         for ava in ava_chest.items():
             self.images_ava[(obj.chest, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
         self.images_ava[(obj.wall, '')] = Image.from_file(path + '/images/wall.jpg')
+        self.images_ava[(obj.ball, ava_ball.ball)] = Image.from_file(path + '/images/ball.png')
         self.image_killed = Image.from_file(path + '/images/player_loss.png')
         self.image_space = Image.from_file(path + '/images/space.jpg')
 
@@ -216,7 +231,7 @@ class Drawer(Thread):
                                         self.canvas.draw_image(self.image_killed, col * CELL_PIXELS, row * CELL_PIXELS)            
                                     elif user_i['state'] == player_state.inactive:
                                         self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)
-                        elif cell['obj'] in [obj.chest, obj.guard]:                                    
+                        elif cell['obj'] in [obj.chest, obj.guard, obj.ball]:
                             self.canvas.draw_image(self.images_ava[(cell['obj'], cell['image'])], col * CELL_PIXELS, row * CELL_PIXELS)
                         elif cell['obj'] == obj.space:                                                                
                             self.canvas.clear_rect(col * CELL_PIXELS, row * CELL_PIXELS, CELL_PIXELS, CELL_PIXELS)

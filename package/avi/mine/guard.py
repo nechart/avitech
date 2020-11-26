@@ -1,5 +1,5 @@
 from time import sleep
-import datetime
+from datetime import datetime
 from threading import Thread
 import numpy as np
 import random
@@ -11,6 +11,8 @@ from .data import event
 from .data import user
 
 EVENT_TIME_LAG = 1.5
+KILL_LAG = 2
+
 dir2action = {  'up':action.guard_move_up, 
                 'down':action.guard_move_down, 
                 'left':action.guard_move_left, 
@@ -21,15 +23,20 @@ class Guard(Thread):
     def __init__(self, server, guardid):
         self.server = server
         self.guardid = guardid
+        self.killed = False
+        self.kill_dt = 0
         self.stop = False
         super(Guard, self).__init__()
 
     def do_action(self):
+        state = None
+        if self.killed == True:
+            return state
+
         self.cell = map.get_guard_cell(self.server.id, self.guardid, self.server.con)
 
         objs = map.get_objs(self.server.server, self.cell['row'], self.cell['col'], self.server.con)
         
-        state = None
         if obj.player in objs.values(): #1 проверить, что игрок рядом. если да - съесть
             for cell in map.find_round(self.server.id, self.cell['row'], self.cell['col'], self.server.con):
                 if cell['obj'] == obj.player:
@@ -48,6 +55,12 @@ class Guard(Thread):
         while(True):
             if not self.server.check_state() or self.stop: 
                 return
-            self.do_action()
+
+            if self.killed == True:
+                if (datetime.utcnow() - self.kill_dt).total_seconds() >= KILL_LAG:
+                    event.send_event(self.server.server['id'], self.guardid, action.spawn_guard, self.server.con)
+                    self.killed = False
+            else:
+                self.do_action()
 
             sleep(EVENT_TIME_LAG)

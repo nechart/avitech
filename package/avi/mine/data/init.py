@@ -15,6 +15,8 @@ def drop_tables(cursor, con=None):
     cursor.execute(drop_table_servers)
     drop_table_servers = '''DROP TABLE IF EXISTS servers;'''
     cursor.execute(drop_table_servers)
+    drop_table_servers = '''DROP TABLE IF EXISTS usersetup;'''
+    cursor.execute(drop_table_servers)
 
 
 @connection_commit_test
@@ -76,5 +78,15 @@ def create_tables(cursor, con=None):
         );
     '''
     cursor.execute(create_table_events)
+
+    create_table_usersetup = '''CREATE TABLE usersetup (
+        id    SERIAL PRIMARY KEY,
+        username  varchar(20) NOT NULL,    
+        avatar varchar(20)  NOT NULL
+        );
+    '''
+    cursor.execute(create_table_usersetup
+    )
+
 
     print("Tables created successfully in dbase {}".format(DB))

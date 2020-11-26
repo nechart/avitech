@@ -14,6 +14,7 @@
 
 from .base import *
 TABLE = 'users'
+TABLE_SETUP = 'usersetup'
 
 def find_user(userid=0, con=None):
     wheres = {'id': userid}
@@ -49,3 +50,22 @@ def update_user(user_rec={}, con=None):
 def delete_users(serverid=0, con=None):
     wheres = {'serverid': serverid}
     return delete(table_name = TABLE, wheres = wheres, con=con)
+
+# user setup
+def set_user_setup(username='', ava='', con=None):
+    user_setup = find_user_setup(username, con=con)
+    if user_setup is None:  
+        row = {}
+        row['username'] = username
+        row['avatar'] = ava
+        user_setup = insert(table_name = TABLE_SETUP, row = row, con=con)
+    else:
+        user_setup['avatar'] = ava
+        user_setup = update(table_name = TABLE_SETUP, row = user_setup, con=con)
+    return user_setup
+
+
+def find_user_setup(username='', con=None):
+    wheres = {'username': username}
+    user_setup = find(table_name = TABLE_SETUP, wheres = wheres, con=con)
+    return user_setup

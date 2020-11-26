@@ -6,6 +6,7 @@ class obj:
     player = 2
     guard = 3
     chest = 4
+    ball = 5
 
 class server_state:
     inactive = 0
@@ -35,6 +36,11 @@ class action:
     move_left = 4
     move_up = 5
     move_down = 6
+    fire_right = 7
+    fire_left = 8
+    fire_up = 9
+    fire_down = 10
+
     spawn_guard = 100
     spawn_chest = 101
     guard_kill = 102
@@ -42,6 +48,10 @@ class action:
     guard_move_left = 104
     guard_move_up = 105
     guard_move_down = 106
+    ball_move_right = 201
+    ball_move_left = 202
+    ball_move_up = 203
+    ball_move_down = 204
 
 
 class avatar:
@@ -62,7 +72,8 @@ class avatar:
 class ava_guard:
     guard1 = 'guard1'
     guard2 = 'guard2'
-    guard3 = 'guard3'    
+    guard3 = 'guard3' 
+    killed = 'bang'    # не входит в items!
 
     @staticmethod
     def items():
@@ -74,7 +85,14 @@ class ava_guard:
 class ava_chest:
     chest1 = 'chest1'
     chest2 = 'chest2'
+
+    @staticmethod
+    def items():
+        return [ava_chest.chest1, 
+                ava_chest.chest2,]
     
+class ava_ball:
+    ball = 'ball'
     
     @staticmethod
     def items():

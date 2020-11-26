@@ -4,16 +4,26 @@ import avi.mine.data.init as data_init
 import avi.mine.server as server
 import avi.mine.player as player
 import avi.mine.map as map
+from avi.mine.data import user
 from avi.mine.data.base import connect as connect
 from avi.mine.enums import *
 
 #con = connect()
+#user.set_user_setup('aaa', 'bbb', con)
+from avi.mine.levels import levels as levels
+from avi.mine.enums import *
+import avi.strikeball.player as player
+config=levels['crest']
+AVATAR = avatar.bill
+game = player.play_server(config, AVATAR)
+exit()
+
 #data_init.drop_tables(con)
 #data_init.create_tables(con)
 #con.close()
 server.Server.recreate_tables()
 exit()
-#
+
 servername = '4cubes'
 server = server.Server.create(servername)
 config=levels[servername]

@@ -1,6 +1,10 @@
 from .enums import *
 from .client import Client
+from .server import Server
 from . import map
+from .data import user
+
+import getpass
 """
 game = Player(server_name) 
 game.play() # отобразить игру. статус игрока меняется на 1
@@ -10,7 +14,7 @@ while game.active():  # active проверяет статус сервера и
 """
 
 class Player():
-    def __init__(self, server_name, ava = avatar.cowboy):
+    def __init__(self, server_name, ava=None):
         self.client = Client()
         self.client.connect(server_name, ava)
 
@@ -171,3 +175,13 @@ class Player():
             return objects[deltas.index(min(deltas))]
         except:
             raise Exception("Игра прервана")
+
+
+def play_server(config, ava=None):
+    servername = getpass.getuser() + '_server'
+    server = Server.create(servername)
+    server.init_map(config)
+    server.launch()
+    player = Player(servername, ava)
+    player.client.server_obj = server
+    return player

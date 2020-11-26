@@ -65,6 +65,9 @@ def get_objs_by_type(serverid=0, obj_type=obj.space, con=None):
 def get_guard_cell(serverid=0, guardid=0, con=None):
     return find(table_name='maps', wheres={'serverid':serverid, 'obj':obj.guard, 'userid':guardid}, con=con)
 
+def get_ball_cell(serverid=0, guardid=0, con=None):
+    return find(table_name='maps', wheres={'serverid':serverid, 'obj':obj.ball, 'userid':guardid}, con=con)
+
 def find_path(server_rec, pos, pos_goal, con=None):
     # https://www.cyberforum.ru/python/thread2021804.html
     def searсh_path(data, pos=(), pos_goal=(), server_rec={}, short_path={}, full_path={}, count=0): 

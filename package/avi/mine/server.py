@@ -65,9 +65,12 @@ class Server():
 
         map.recreate_map(serverid=self.id, levelmap=self.config['map'], con=self.con)
         #self.map = self.get_map()
-        self.chests = []
+        #self.chests = []
         self.guards = []
 
+    def getEventQueue(self):
+        return EventQueue
+    
     def launch(self):
         self.server['state'] = server_state.active
         logintime = strftime("%Y-%m-%d %H:%M:%S", gmtime())    
@@ -77,7 +80,7 @@ class Server():
         for _ in range(self.config['chests']):
             event.insert_event(serverid=self.id, userid=-1, action=action.spawn_chest, con=self.con)
 
-        self.queue = EventQueue(self)
+        self.queue = self.getEventQueue()(self)
 
         self.queue.start()
 
@@ -105,16 +108,16 @@ class Server():
         return True
 
     def start_guards(self):
-        self.guards = []
+        self.guards = {}
         for guardid in range(self.config['guards']):
             state = event.send_event(serverid=self.id, userid=guardid, action=action.spawn_guard, con=self.con)
             if state == action_state.processed:
                 guard = Guard(self, guardid)
-                self.guards.append(guard)
+                self.guards[guardid] = guard
                 guard.start()
 
     def stop_guards(self):
-        for guard in self.guards:
+        for guard in self.guards.values():
             guard.stop = True
 
 
