@@ -75,10 +75,11 @@ class EventQueue(mineEventQueue):
                     # попали в стража
                     elif cell and cell['obj'] == obj.guard:
                         guard = self.server.guards[cell['userid']]
-                        guard.killed = True
-                        guard.kill_dt =  datetime.utcnow()
-                        cell['image'] = ava_guard.killed
-                        map.update_cell(cell, self.server.con)
+                        if not guard.killed:
+                            guard.killed = True
+                            guard.kill_dt =  datetime.utcnow()
+                            cell['image'] = ava_guard.killed
+                            map.update_cell(cell, self.server.con)
                     # попали в мяч
                     elif cell and cell['obj'] == obj.ball:
                         ball = self.server.balls.get(cell['userid'], None)
