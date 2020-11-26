@@ -114,7 +114,7 @@ class Player():
         cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.player, con=self.client.con)
         chests = []
         for cell in cells:
-            user_rec = user.find_user(cell['userid'], self.server.con)
+            user_rec = user.find_user(cell['userid'], con=self.client.con)
             if user_rec['state'] == player_state.active:
                 chests.append((cell['row'], cell['col']))
         return chests                
