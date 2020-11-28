@@ -24,7 +24,9 @@ class Player(minePlayer):
         list - список кортежей, по которым можно стрелять. 
         """
         pos_user = self.get_pos()
-        ret_goals = [goal for goal in goals if goal[0] == pos_user[0] or goal[1] == pos_user[1]]
+        dict_goals = {goal:abs(goal[0] - pos_user[0]) + abs(goal[1] - pos_user[1]) for goal in goals if goal[0] == pos_user[0] or goal[1] == pos_user[1]}
+
+        ret_goals = list(dict(sorted(dict_goals.items(), key=lambda item: item[1])).keys())
         
         if pos_user in ret_goals:
             ret_goals.remove(pos_user)
