@@ -122,7 +122,7 @@ class Player():
     def get_player(self, name):
         # получить координату игрока (row1, col1)
         user_loc = user.find_user_by_name(name, con=self.client.con)
-        return None if not user_loc else (user_loc.row, user_loc.col)
+        return None if not user_loc else (user_loc['row'], user_loc['col'])
 
     def get_walls(self):
         # получить список координат препятствий [(row1, col1), (row2, col2)]
