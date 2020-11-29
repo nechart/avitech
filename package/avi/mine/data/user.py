@@ -22,6 +22,12 @@ def find_user(userid=0, con=None):
     return user_rec
 
 
+def find_user_by_name(name='', con=None):
+    wheres = {'name': name}
+    user_rec = find(table_name = TABLE, wheres = wheres, con=con)
+    return user_rec
+
+
 def find_all_users(serverid=0, con=None):
     wheres = {'serverid': serverid}
     user_set = find_many(table_name = TABLE, wheres = wheres, con=con)
