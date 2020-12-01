@@ -33,6 +33,10 @@ def find_events(serverid=0, state=action_state.to_process, con=None):
 def update_event(row={}, con=None):
     return update(table_name = TABLE, row=row, con=con)
 
+def delete_event(row={}, con=None):
+    wheres = {'id': row['id']}
+    return delete(table_name = TABLE, wheres=wheres, con=con)
+
 def delete_events(serverid=0, con=None):
     wheres = {'serverid': serverid}
     return delete(table_name = TABLE, wheres=wheres, con=con)
@@ -54,6 +58,9 @@ def send_event(serverid=0, userid=0, action=action.spawn, con=None, wait_lag = E
     while True:
         sleep(wait_lag)
         event_rec = find_event(eventid, con)
+        if not event_rec:
+            continue
         if event_rec['state'] >= action_state.processed:
+            delete_event(event_rec, con)
             break
     return event_rec['state']

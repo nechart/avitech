@@ -79,6 +79,9 @@ def create_tables(cursor, con=None):
     '''
     cursor.execute(create_table_events)
 
+    cursor.execute('CREATE UNIQUE INDEX idx ON events (id);')
+
+
     create_table_usersetup = '''CREATE TABLE usersetup (
         id    SERIAL PRIMARY KEY,
         username  varchar(20) NOT NULL,    
