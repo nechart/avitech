@@ -33,8 +33,8 @@ CELL_PIXELS = 40
 path = str(pathlib.Path(__file__).parent.absolute())
 
 class Client():
-    def __init__(self):
-        self.user_name = getpass.getuser()
+    def __init__(self, user_name = None):
+        self.user_name = getpass.getuser() if not user_name else user_name
         self.drawer = None
         self.server_obj = None
 

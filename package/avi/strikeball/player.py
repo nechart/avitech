@@ -7,8 +7,8 @@ import getpass
 
 
 class Player(minePlayer):
-    def __init__(self, server_name, ava=None):
-        super().__init__(server_name, ava)
+    def __init__(self, server_name, ava=None, user_name = None):
+        super().__init__(server_name, ava, user_name)
 
     def shoot(self, dir):
         # выстрелить
