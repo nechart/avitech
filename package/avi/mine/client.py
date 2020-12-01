@@ -161,7 +161,7 @@ class Drawer(Thread):
         b_stop.on_click(self.client.stop) 
 
         panel = VBox([HBox([Label('Сервер:'), Label(self.client.server['name'])]),
-                          self.label_game_status
+                          self.label_game_status,
                           HBox([Label('Игрок:'),Label(self.client.user_name), b_stop]),
                           self.panel_users],
                       layout=box_layout)    
