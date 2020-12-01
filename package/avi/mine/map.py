@@ -51,8 +51,8 @@ def change_cells(serverid=0, cell_1=tuple(), cell_2=tuple(), con=None):
     cell2_rec= find_cell(serverid=serverid, row=cell_2[0], col=cell_2[1], con=con)
     cell1_rec['obj'], cell1_rec['userid'], cell2_rec['obj'], cell2_rec['userid'] = cell2_rec['obj'], cell2_rec['userid'], cell1_rec['obj'], cell1_rec['userid']
     cell1_rec['image'], cell2_rec['image'] = cell2_rec['image'], cell1_rec['image']
-    update_cell(cell1_rec)
-    update_cell(cell2_rec)
+    update_cell(cell1_rec, con=con)
+    update_cell(cell2_rec, con=con)
 
 
 def check_coords(server_rec, row, col):

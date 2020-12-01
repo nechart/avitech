@@ -30,7 +30,7 @@ REDRAW_LAG = 0.2
 KILL_LAG = 2
 CELL_PIXELS = 40
 
-path = str(pathlib.Path(__file__).parent.absolute())
+path_file = str(pathlib.Path(__file__).parent.absolute())
 
 class Client():
     def __init__(self, user_name = None):
@@ -117,7 +117,7 @@ class Drawer(Thread):
         self.init_images()
         super(Drawer, self).__init__()
 
-    def init_images(self):
+    def init_images(self, path=path_file):
 
         self.images_ava = {}
         self.images_ava_hide = {}        
@@ -134,7 +134,7 @@ class Drawer(Thread):
 
         for ava in ava_chest.items():
             self.images_ava[(obj.chest, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
-        self.images_ava[(obj.wall, '')] = Image.from_file(path + '/images/wall.jpg')
+        self.images_ava[(obj.wall, '')] = Image.from_file(path + '/images/wall.png')
         self.images_ava[(obj.ball, ava_ball.ball)] = Image.from_file(path + '/images/ball.png')
         self.image_killed = Image.from_file(path + '/images/player_loss.png')
         self.image_space = Image.from_file(path + '/images/space.jpg')
@@ -200,11 +200,11 @@ class Drawer(Thread):
         #display(VBox([Image.from_file(path + '/images/header.jpg', width=200,height=40), HBox([multi])]), self.output)        
         display(HBox([multi, panel]), self.output)        
 
-    def draw_base(self):
+    def draw_base(self, color='black'):
         self.update_map()
         with hold_canvas(self.canvas_base):
             self.canvas_base.clear()
-            self.canvas_base.fill_style = 'black'
+            self.canvas_base.fill_style = color
             self.canvas_base.fill_rect(0, 0, self.canvas_base.size[0], self.canvas_base.size[1])
             for row in range(len(self.map)):
                 for col in range(len(self.map[row])):

@@ -77,14 +77,14 @@ class Server():
         self.server['start_dt'] = logintime
         update_server(self.server, con=self.con)
 
-        for _ in range(self.config['chests']):
-            event.insert_event(serverid=self.id, userid=-1, action=action.spawn_chest, con=self.con)
-
         self.queue = self.getEventQueue()(self)
 
         self.queue.start()
 
         print('Сервер {} запущен c ID {}'.format(self.server_name, self.id))
+
+        for _ in range(self.config['chests']):
+            event.insert_event(serverid=self.id, userid=-1, action=action.spawn_chest, con=self.con)
 
         self.start_guards()
 

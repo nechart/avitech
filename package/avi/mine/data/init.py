@@ -29,7 +29,8 @@ def create_tables(cursor, con=None):
         mapsize_y integer,
         state    integer,
         start_dt timestamp,
-        stop_dt  timestamp
+        stop_dt  timestamp,
+        food_per_sec float
         );
     '''
     cursor.execute(create_table_servers)

@@ -21,13 +21,18 @@ class EventQueue(Thread):
     def set_processed(self, event_rec):
         if event_rec['state'] != action_state.rejected:
             event_rec['state'] = action_state.processed
-        event.update_event(event_rec)
+        if event_rec['action'] == action.spawn_chest:
+            event.delete_event(event_rec, con=self.server.con)
+        else:
+            event.update_event(event_rec, con=self.server.con)
     
     def process_events(self):
         events = event.find_events(serverid=self.server.id, con=self.server.con)
+        #print('===process_events', datetime.datetime.now())
         for event_rec in events:
-            #print(datetime.datetime.now())
+            #time_start = datetime.datetime.now()
             self.set_processed(self.process_event(event_rec))
+            #print(event_rec['action'], 'process_event', datetime.datetime.now() - time_start)
 
     def process_event(self, event_rec):
         if event_rec['action'] == action.spawn:
@@ -159,6 +164,7 @@ class EventQueue(Thread):
                     event_rec['state'] = action_state.rejected
                 else:
                     map.change_cells(self.server.id, (guard.cell['row'], guard.cell['col']), (row, col), self.server.con)
+                    pass
         
         return event_rec
 
@@ -166,9 +172,9 @@ class EventQueue(Thread):
         while(True):
             if not self.server.check_state() or self.stop: 
                 return
-            #try:
-            self.process_events()
-            sleep(EVENT_LAG_TIME)
-            #except Exception as e: 
+            try:
+                self.process_events()
+                sleep(EVENT_LAG_TIME)
+            except Exception as e: 
                 # logger.error('Failed to upload to ftp: '+ str(e))
-            #    print(str(e))
+                print(str(e))

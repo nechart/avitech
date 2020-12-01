@@ -1,7 +1,7 @@
 #import avi.dangerlab.game as game
 from avi.mine.levels import levels as levels
 import avi.mine.data.init as data_init
-import avi.strikeball.server as server
+import avi.survive.server as server
 import avi.mine.player as player
 import avi.mine.map as map
 from avi.mine.data.base import connect as connect
@@ -16,7 +16,8 @@ server.Server.recreate_tables()
 
 servername = 'survival' # #
 server = server.Server.create(servername)
-config=levels['empty']#servername]
+config=levels[servername] # 'empty']#]
+config['food_per_sec'] = 0.3
 #config['guards'] = 6
 server.init_map(config)
 server.launch()

@@ -35,7 +35,7 @@ class Ball(Thread):
     def do_action(self):
         self.cell = map.get_ball_cell(self.server.id, self.ballid, self.server.con)
         if self.cell: # and map.check_coords(self.server.server, self.cell['row'], self.cell['col']):
-            state = event.send_event(self.server.id, self.ballid, dir2action[self.dir], self.server.con, wait_lag = 0.05) #EVENT_TIME_LAG//2) 
+            state = event.send_event(self.server.id, self.ballid, dir2action[self.dir], self.server.con, wait_lag = EVENT_TIME_LAG) #EVENT_TIME_LAG//2) 
         else:
             state = None
             #raise ValueError('cell is none')
