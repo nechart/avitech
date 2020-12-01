@@ -14,10 +14,10 @@ from avi.mine.enums import *
 #server.Server.recreate_tables()
 #exit()
 
-servername = '4cubes'
+servername = 'survival' #'empty' #
 server = server.Server.create(servername)
 config=levels[servername]
-config['guards'] = 6
+#config['guards'] = 6
 server.init_map(config)
 server.launch()
 

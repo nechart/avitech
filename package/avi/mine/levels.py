@@ -64,7 +64,7 @@ mlevel_closely =\
 
 mlevel_survival_empty =[[1]*20 for i in range(10)]
 
-levels = {'empty':{'map': mlevel_empty, 'guards':0, 'chests':10},
+levels = {'empty':{'map': mlevel_empty, 'guards':1, 'chests':10},
           '4cubes':{'map': mlevel_4cubes, 'guards':3, 'chests':5},
           'crest':{'map': mlevel_crest, 'guards':10, 'chests':5},
           'close':{'map': mlevel_closely, 'guards':6, 'chests':3},

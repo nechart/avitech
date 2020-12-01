@@ -27,7 +27,8 @@ class EventQueue(mineEventQueue):
                 elif self.server.userballs.get(event_rec['userid'], 0) > 0:  # шар уже выстрелил у данного пользователя
                     event_rec['state'] = action_state.rejected
                 else:
-                    ballid = len(self.server.balls)
+                    ballid = self.server.ball_last_id
+                    self.server.ball_last_id += 1
 
                     cell = map.find_cell(self.server.id, row, col, con=self.server.con)
                     cell['obj'] = obj.ball
@@ -52,9 +53,9 @@ class EventQueue(mineEventQueue):
                 cell = map.find_cell(self.server.id, row, col, con=self.server.con)
                 # если вылетели за границу или врезались в кого-то, то уничтожаем шарик
                 if not map.check_coords(self.server.server, row, col) or cell['obj'] != obj.space:
-                    self.server.userballs[ball.userid] = self.server.userballs.get(event_rec['userid'], 1) - 1
                     ball.stop = True
-                    self.server.balls.pop(event_rec['userid'])
+                    self.server.userballs[ball.userid] = self.server.userballs.get(event_rec['userid'], 1) - 1
+                    del self.server.balls[event_rec['userid']]
                     cell_orig = map.find_cell(self.server.id, ball.cell['row'], ball.cell['col'], con=self.server.con)
                     cell_orig['obj'] = obj.space
                     cell_orig['userid'] = -1
@@ -69,7 +70,7 @@ class EventQueue(mineEventQueue):
                             user_rec['state'] = player_state.killed
                             user.update_user(user_rec, con=self.server.con)
 
-                            user_orig_rec['score'] += 3
+                            user_orig_rec['score'] -= 10
                             user.update_user(user_orig_rec, con=self.server.con)
                     # попали в стража
                     elif cell and cell['obj'] == obj.guard:
@@ -84,11 +85,12 @@ class EventQueue(mineEventQueue):
                             user.update_user(user_orig_rec, con=self.server.con)
                     # попали в мяч
                     elif cell and cell['obj'] == obj.ball:
+                        print('попали в мяч')
                         ball = self.server.balls.get(cell['userid'], None)
                         if ball:
                             ball.stop = True
-                            self.server.balls.pop(cell['userid'])
-                            self.server.userballs[cell['userid']] = self.server.userballs.get(cell['userid'], 1) - 1
+                            del self.server.balls[cell['userid']]
+                            self.server.userballs[ball.userid] = self.server.userballs.get(ball.userid, 1) - 1
                         cell['obj'] = obj.space
                         cell['userid'] = -1
                         cell['image'] = ''

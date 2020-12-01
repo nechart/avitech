@@ -14,6 +14,7 @@ class Server(mineServer):
         super().start_guards()
         self.balls = {}
         self.userballs = {}
+        self.ball_last_id = 0  # код последнего патрона (инкрементный)
 
     def stop_guards(self):
         super().stop_guards()
