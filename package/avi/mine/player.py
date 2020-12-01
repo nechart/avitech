@@ -15,8 +15,8 @@ while game.active():  # active проверяет статус сервера и
 
 class Player():
     def __init__(self, server_name, ava=None, user_name = None):
-        self.client = Client()
-        self.client.connect(server_name, ava, user_name)
+        self.client = Client(user_name)
+        self.client.connect(server_name, ava)
 
     def active(self):
         # проверить статус сервера и игрока
