@@ -32,7 +32,7 @@ class Player(basePlayer):
 
     def bot_hunter(self, guards):
         """ Бот охотника"""
-        objs = self.self()  # осмотреться
+        objs = self.get_objs()  # осмотреться
 
         if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
             self.hide()  # если да, спрятаться
@@ -43,7 +43,7 @@ class Player(basePlayer):
         steps = self.find_shoot_pos(guards) # получить ближайшие позиции для стрельбы
         if steps: # проверить, что список позиций непустой
             (step_num, step_dir) = steps[0] # взять первую позицию из списка (число шагов, направление)
-            for step in range(step_num): # цикл на число шагов
+            for _ in range(step_num): # цикл на число шагов
                 self.move(step_dir)    # движение в нужном направлении
         goals = self.get_goals(guards) # здесь игрок должен быть уже на позиции, проверим, есть ли цели для стрельбы
         if goals:  # если цели есть (список не пустой)
@@ -80,9 +80,11 @@ class Player(basePlayer):
     def bot_bodyguard(self, player, guards):
         """ Бот телохранителя.
             Телохранитель должен следить за координатами своего друга, следовать за ним и убивать всех стражников"""
+        next_dir = {'up':'right', 'right':'down', 'down':'left', 'left':'up'}
+
         pos = self.get_pos()     # получить свои координаты
         player_pos = self.get_player(player)     # получить координаты игрока
-        
+                
         # проверим, что телохранитель находится не дальше 2 клеток от друга:
         if (abs(pos[0] - player_pos[0]) > 2 or  abs(pos[0] - player_pos[0]) > 2):
             goal_dir = self.get_dir(player_pos)  # получить направление
