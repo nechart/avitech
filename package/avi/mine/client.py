@@ -33,12 +33,12 @@ CELL_PIXELS = 40
 path_file = str(pathlib.Path(__file__).parent.absolute())
 
 class Client():
-    def __init__(self, user_name = None):
+    def __init__(self, user_name=None):
         self.user_name = getpass.getuser() if not user_name else user_name
         self.drawer = None
         self.server_obj = None
 
-    def connect(self, server_name, ava = None):
+    def connect(self, server_name, ava=None):
         self.con = base.connect()
         self.server = server.find_server(server_name, self.con)
         if self.server is None:
@@ -59,6 +59,7 @@ class Client():
         if self.send_event(action.spawn) == action_state.processed:
             print('Ожидание подключения к серверу {}...'.format(server_name))
             self.user = find_user(self.userid)
+            self.user['state'] = ava
             self.user['state'] = player_state.active
             self.user['score'] = 0
             self.user['kills'] = 0

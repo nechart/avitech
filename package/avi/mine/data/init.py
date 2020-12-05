@@ -15,8 +15,8 @@ def drop_tables(cursor, con=None):
     cursor.execute(drop_table_servers)
     drop_table_servers = '''DROP TABLE IF EXISTS servers;'''
     cursor.execute(drop_table_servers)
-    drop_table_servers = '''DROP TABLE IF EXISTS usersetup;'''
-    cursor.execute(drop_table_servers)
+    #drop_table_servers = '''DROP TABLE IF EXISTS usersetup;'''
+    #cursor.execute(drop_table_servers)
 
 
 @connection_commit_test
@@ -83,7 +83,7 @@ def create_tables(cursor, con=None):
     cursor.execute('CREATE UNIQUE INDEX idx ON events (id);')
 
 
-    create_table_usersetup = '''CREATE TABLE usersetup (
+    create_table_usersetup = '''CREATE TABLE IF NOT EXISTS usersetup (
         id    SERIAL PRIMARY KEY,
         username  varchar(20) NOT NULL,    
         avatar varchar(20)  NOT NULL

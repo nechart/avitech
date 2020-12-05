@@ -7,12 +7,12 @@ import avi.mine.map as map
 from avi.mine.data.base import connect as connect
 from avi.mine.enums import *
 
-#con = connect()
-#data_init.drop_tables(con)
-#data_init.create_tables(con)
-#con.close()
-server.Server.recreate_tables()
-#exit()
+con = connect()
+data_init.drop_tables(con)
+data_init.create_tables(con)
+con.close()
+#server.Server.recreate_tables()
+exit()
 
 servername = 'survival' # #
 server = server.Server.create(servername)
