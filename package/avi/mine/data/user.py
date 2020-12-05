@@ -45,6 +45,9 @@ def find_or_create_user(serverid=0, username='', ava='', con=None):
         row['kills'] = 0
         user_rec = insert(table_name = TABLE, row = row, con=con)
         user_rec = find(table_name = TABLE, wheres = wheres, con=con)
+    elif ava != user_rec['avatar']:
+        user_rec['avatar'] = ava
+        update_user(user_rec, con)
     return user_rec
 
 
