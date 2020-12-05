@@ -59,7 +59,7 @@ class Client():
         if self.send_event(action.spawn) == action_state.processed:
             print('Ожидание подключения к серверу {}...'.format(server_name))
             self.user = find_user(self.userid)
-            self.user['state'] = ava
+            self.user['avatar'] = ava
             self.user['state'] = player_state.active
             self.user['score'] = 0
             self.user['kills'] = 0
