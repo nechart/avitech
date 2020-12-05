@@ -182,7 +182,7 @@ class Player():
             deltas = list(builtins.map(lambda x:abs(x[0]) + abs(x[1]), delta_pos))
             return objects[deltas.index(min(deltas))]
         except:
-            raise Exception("Игра прервана")
+            return None
 
 
 def play_server(config, ava=None):

@@ -54,6 +54,7 @@ class Player(basePlayer):
     def bot_collector(self, chests):
         """ Бот собирателя"""
         chest = self.get_nearest(chests)  # найти самое близкое сокровище от игрока
+        if chest is None: return
 
         # Создадим словарь направлений для обхода по часовой стрелке:
         next_dir = {'up':'right', 'right':'down', 'down':'left', 'left':'up'}
