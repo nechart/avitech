@@ -60,7 +60,7 @@ class Player(basePlayer):
                 players[user_rec['name']] = (cell['row'], cell['col'])
         return players    
 
-    def action_hunt(self, rows=None, cols=None):
+    def action_hunt(self, cols=None, rows=None):
         """ Охотиться на ближайшего моба"""
         objs = self.get_objs()  # осмотреться
         if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
@@ -89,7 +89,34 @@ class Player(basePlayer):
             if dir:                     # проверить, что направление выбрано
                 self.shoot(dir)          # выполнить выстрел        
 
-    def action_collect(self, rows=None, cols=None):
+    def action_kill_user(self, user, cols=None, rows=None):
+        """ Уничтожить игрока"""
+        objs = self.get_objs()  # осмотреться
+        if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
+            self.hide()  # если да, спрятаться
+            return
+
+        user_pos = self.get_player(user)
+
+        if not cols is None and (user_pos[1] < cols[0] or user_pos[1] > cols[1]): return False
+        if not rows is None and (user_pos[0] < rows[0] or user_pos[0] > rows[1]): return False
+        pos = self.get_pos()
+        
+        steps = self.find_shoot_pos([user_pos]) # получить ближайшие позиции для стрельбы
+        if steps: # проверить, что список позиций непустой
+            (step_num, step_dir) = steps[0] # взять первую позицию из списка (число шагов, направление)
+            for _ in range(step_num): # цикл на число шагов
+                if not self.move(step_dir):    # движение в нужном направлении
+                    self.move(next_dir[step_dir])
+
+        goals = self.get_goals([user_pos]) # здесь игрок должен быть уже на позиции, проверим, есть ли цели для стрельбы
+        if goals:  # если цели есть (список не пустой)
+            dir = self.get_dir(goals[0])  # получить направление выстрела для первой по близости цели
+            if dir:                     # проверить, что направление выбрано
+                self.shoot(dir)          # выполнить выстрел        
+
+
+    def action_collect(self, cols=None, rows=None):
         """ Cобрать ближайший ресурс"""
         objs = self.get_objs()  # осмотреться
         if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
