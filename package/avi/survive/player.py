@@ -49,7 +49,7 @@ class Player(basePlayer):
                 else:
                     if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
                         if not self.move(next_dir[goal_dir]):   # выбрать следующее направление по часовой стрелке
-                            self.move(prev_dir[goal_dir]): # выбрать следующее направление против часовой стрелке
+                            self.move(prev_dir[goal_dir]) # выбрать следующее направление против часовой стрелке
                     self.move(goal_dir)          # выполнить движение
             if pos in pos_history:
                 return False
