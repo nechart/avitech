@@ -52,10 +52,10 @@ class Player(basePlayer):
         cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.player, con=self.client.con)
         players = {}
         for cell in cells:
+            user_rec = user.find_user(cell['userid'], con=self.client.con)
             if not team is None:
                 if user_rec['team'] != team:
                     continue
-            user_rec = user.find_user(cell['userid'], con=self.client.con)
             if user_rec['state'] == player_state.active:
                 players[user_rec['name']] = (cell['row'], cell['col'])
         return players    
