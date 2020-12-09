@@ -145,6 +145,7 @@ class Player():
             delta_row = pos_goal[0] - pos_user[0]    # вычислить разницу строк
             delta_col = pos_goal[1] - pos_user[1]    # вычислить разницу столбцов
             dir = ""
+            """
             if delta_row < 0:
                 dir = "up"
             elif delta_row > 0:
@@ -155,8 +156,7 @@ class Player():
                 elif delta_col > 0:
                     dir = "right"
             return dir    
-
-            """
+            """            
             if abs(delta_row) > abs(delta_col):  # если по вертикали идти больше, чем по горизонтали - идем вверх или вниз
                 if delta_row < 0:
                     dir = "up"
@@ -168,7 +168,6 @@ class Player():
                 elif delta_col > 0:
                     dir = "right"
             return dir    
-            """            
         except:
             raise Exception("Игра прервана")
     

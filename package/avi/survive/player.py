@@ -37,8 +37,7 @@ class Player(basePlayer):
     
     def move_to(self, pos_to):
         """ Дойти до позиции"""
-        pos_last=(-1,-1)
-        pos_last2=(-1,-1)
+        pos_history = []
         pos = self.get_pos()
         while self.distance(pos_to, pos) > 1:
             goal_dir = self.get_dir(pos_to)  # получить направление
@@ -50,14 +49,12 @@ class Player(basePlayer):
                 else:
                     if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
                         if not self.move(next_dir[goal_dir]):   # выбрать следующее направление по часовой стрелке
-                            self.move(prev_dir[goal_dir]) # выбрать следующее направление против часовой стрелке
-                    else:
-                        self.move(goal_dir)          # выполнить движение
-            pos = self.get_pos() # обновить свою позицию
-            pos_last2 = pos_last
-            pos_last = pos
-            if (pos_last2 == pos):  # произошло зацикливание
+                            self.move(prev_dir[goal_dir]): # выбрать следующее направление против часовой стрелке
+                    self.move(goal_dir)          # выполнить движение
+            if pos in pos_history:
                 return False
+            pos_history.add(pos)
+            pos = self.get_pos() # обновить свою позицию
         return True
 
     ####################################
