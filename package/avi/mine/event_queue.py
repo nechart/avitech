@@ -130,7 +130,8 @@ class EventQueue(Thread):
                             self.score_pick(user_rec, cell['image'])
                             user_rec['state'] = player_state.active
                             user.update_user(user_rec, con=self.server.con)
-                            event.insert_event(serverid=self.server.id, userid=-1, action=action.spawn_chest, con=self.server.con)
+                            if cell['image'] != ava_chest.bulk:
+                                event.insert_event(serverid=self.server.id, userid=-1, action=action.spawn_chest, con=self.server.con)
                             break
             else:
                 event_rec['state'] = action_state.rejected
