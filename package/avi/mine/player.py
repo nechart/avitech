@@ -121,7 +121,7 @@ class Player():
 
     def get_player(self, name):
         # получить координату игрока (row1, col1)
-        user_loc = user.find_user_by_name(name, con=self.client.con)
+        user_loc = user.find_user_by_name(name, serverid=self.client.server['id'], con=self.client.con)
         return None if not user_loc else (user_loc['row'], user_loc['col'])
 
     def get_walls(self):
