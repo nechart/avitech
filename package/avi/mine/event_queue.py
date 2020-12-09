@@ -34,31 +34,36 @@ class EventQueue(Thread):
             self.set_processed(self.process_event(event_rec))
             #print(event_rec['action'], 'process_event', datetime.datetime.now() - time_start)
 
+    def find_empty_place(self, user_rec):
+        return map.find_empty_place(self.server.server, con=self.server.con)
+
+    def score_pick(self, user_rec, chest):
+        user_rec['score'] += 1 if chest == ava_chest.chest1 else 2
+
+    def check_space(self, user_rec):
+        return True
+
     def process_event(self, event_rec):
         if event_rec['action'] == action.spawn:
-            row, col = map.find_empty_place(self.server.server, con=self.server.con)
-            if row < 0:
-                event_rec['state'] = action_state.rejected
-            else:
-                user_rec = user.find_user(event_rec['userid'], con=self.server.con)
-                if not user_rec['row'] is None: # юзер был в прошлый раз и перезашел
-                    cell_last = map.find_cell(self.server.id, user_rec['row'], user_rec['col'], con=self.server.con)
-                    if cell_last['userid'] == user_rec['id']:
-                        cell_last['obj'] = obj.space
-                        cell_last['userid'] = -1
-                        cell_last['image'] = ''
-                        map.update_cell(cell_last, self.server.con)
+            user_rec = user.find_user(event_rec['userid'], con=self.server.con)
+            row, col = self.find_empty_place(user_rec)
+            if not user_rec['row'] is None: # юзер был в прошлый раз и перезашел
+                cell_last = map.find_cell(self.server.id, user_rec['row'], user_rec['col'], con=self.server.con)
+                if cell_last['userid'] == user_rec['id']:
+                    cell_last['obj'] = obj.space
+                    cell_last['userid'] = -1
+                    cell_last['image'] = ''
+                    map.update_cell(cell_last, self.server.con)
 
-                user_rec['row'] = row
-                user_rec['col'] = col
-                user_rec['state'] = player_state.active
-                user.update_user(user_rec, con=self.server.con)
-                cell = map.find_cell(self.server.id, row, col, con=self.server.con)
-                cell['obj'] = obj.player
-                cell['userid'] = user_rec['id']
-                cell['image'] = user_rec['avatar']
-                map.update_cell(cell, self.server.con)
-                #print('Пользователь {} ID {} присоединился'.format(user_rec['name'], user_rec['id']))
+            user_rec['row'] = row
+            user_rec['col'] = col
+            user_rec['state'] = player_state.active
+            user.update_user(user_rec, con=self.server.con)
+            cell = map.find_cell(self.server.id, row, col, con=self.server.con)
+            cell['obj'] = obj.player
+            cell['userid'] = user_rec['id']
+            cell['image'] = user_rec['avatar']
+            map.update_cell(cell, self.server.con)
 
         elif event_rec['action'] in [action.spawn_chest, action.spawn_guard]:
             row, col = map.find_empty_place(self.server.server, con=self.server.con)
@@ -69,10 +74,11 @@ class EventQueue(Thread):
                     guard = self.server.guards.get(event_rec['userid'], None)
                     if not guard is None and not guard.cell is None:
                         cell_last = map.get_guard_cell(self.server.id, event_rec['userid'], con=self.server.con)
-                        cell_last['obj'] = obj.space
-                        cell_last['userid'] = -1
-                        cell_last['image'] = ''
-                        map.update_cell(cell_last, self.server.con)
+                        if not cell_last is None:
+                            cell_last['obj'] = obj.space
+                            cell_last['userid'] = -1
+                            cell_last['image'] = ''
+                            map.update_cell(cell_last, self.server.con)
                 #elif event_rec['action'] == action.spawn_chest:
 
                 cell = map.find_cell(self.server.id, row, col, con=self.server.con)
@@ -80,7 +86,6 @@ class EventQueue(Thread):
                 cell['userid'] = event_rec['userid']
                 cell['image'] = random.choice(ava_chest.items()) if event_rec['action'] == action.spawn_chest else random.choice(ava_guard.items())
                 map.update_cell(cell, self.server.con)
-            
 
         elif event_rec['action'] in [action.move_down, action.move_right, action.move_left, action.move_up]:
             user_rec = user.find_user(event_rec['userid'], con=self.server.con)
@@ -110,7 +115,7 @@ class EventQueue(Thread):
         
         elif event_rec['action'] == action.pick:
             user_rec = user.find_user(event_rec['userid'], con=self.server.con)
-            if user_rec['state'] in [player_state.active, player_state.hide]:
+            if user_rec['state'] in [player_state.active, player_state.hide] and self.check_space(user_rec):
                 objs = map.get_objs(self.server.server, user_rec['row'], user_rec['col'], self.server.con)
                 if not obj.chest in objs.values():
                     event_rec['state'] = action_state.rejected
@@ -122,10 +127,9 @@ class EventQueue(Thread):
                             map.change_cells(self.server.id, (user_rec['row'], user_rec['col']), (cell['row'], cell['col']), self.server.con)
                             user_rec['row'] = cell['row']
                             user_rec['col'] = cell['col']
-                            user_rec['score'] += 1 if cell['image'] == ava_chest.chest1 else 2
+                            self.score_pick(user_rec, cell['image'])
                             user_rec['state'] = player_state.active
                             user.update_user(user_rec, con=self.server.con)
-                            #self.server.chests.remove((cell['row'], cell['col']))
                             event.insert_event(serverid=self.server.id, userid=-1, action=action.spawn_chest, con=self.server.con)
                             break
             else:
@@ -172,9 +176,9 @@ class EventQueue(Thread):
         while(True):
             if not self.server.check_state() or self.stop: 
                 return
-            try:
-                self.process_events()
-                sleep(EVENT_LAG_TIME)
-            except Exception as e: 
+            #try:
+            self.process_events()
+            sleep(EVENT_LAG_TIME)
+            #except Exception as e: 
                 # logger.error('Failed to upload to ftp: '+ str(e))
-                print(str(e))
+            #    print(str(e))

@@ -31,12 +31,25 @@ def get_objs(server_rec, row=0, col=0, con=None):
 
     return maplist
 
-def find_empty_place(server_rec, con=None):
+def find_empty_place(server_rec, rows=None, cols=None, con=None):
     attempt = 0
     x, y = -1, -1
     while attempt < 5:
-        y = random.randint(0, server_rec['mapsize_y']-1)
-        x = random.randint(0, server_rec['mapsize_x']-1)
+        if not rows is None:
+            row_from = max(rows[0], 0)
+            row_to = min(rows[1], server_rec['mapsize_y']-1)
+        else:
+            row_from = 0
+            row_to = server_rec['mapsize_y']-1
+        if not cols is None:
+            col_from = max(cols[0], 0)
+            col_to = min(cols[1], server_rec['mapsize_x']-1)
+        else:
+            col_from = 0
+            col_to = server_rec['mapsize_x']-1
+
+        y = random.randint(row_from, row_to)
+        x = random.randint(col_from, col_to)
         cell = find_cell(serverid=server_rec['id'], row=y, col=x, con=con)
         if cell['obj'] != obj.space:
             continue
@@ -120,5 +133,51 @@ def find_path(server_rec, pos, pos_goal, con=None):
     short = short_path(paths[1], start=pos, end=pos_goal)    
     short.reverse()
     return short
+"""
+def find_path_round(server_rec, pos, pos_goal, con=None):
+    
+    data = get_all_objs(server_rec, con=con)
+    path = []
+    clockwise = True
+    pos_cur = pos
+    while True:
+        dir_cur, (row, col) = get_dir(pos_cur, pos_goal, server_rec)
+        if (row, col) in path:
+            dir_cur, (row, col) = get_next_dir(pos_cur, dir_cur, server_rec)
 
+        if not check_coords(server_rec, row, col): # Уперлись в конец карты. надо искать обход с другой стороны
+            if not clockwise return None # нет пути
+            else:
+                clockwise = False # меняем направление обхода и возвращаемся в начало
+                pos_cur = pos
+                continue
+        
+            
+             and data[row][col] != obj.wall: 
 
+        if data[pos_cur[0]][pos_cur[1]] == 
+        pos_cur = (row, col)
+
+def get_dir(pos_user, pos_goal, server_rec):
+    try:        
+        pos = pos_user
+        delta_row = pos_goal[0] - pos_user[0]    # вычислить разницу строк
+        delta_col = pos_goal[1] - pos_user[1]    # вычислить разницу столбцов
+        dir = ""
+        
+        if abs(delta_row) > abs(delta_col):  # если по вертикали идти больше, чем по горизонтали - идем вверх или вниз
+            if delta_row < 0:
+                dir = "up"
+                pos[0] -= 1
+            elif delta_row > 0:
+                dir = "down"
+                pos[0] += 1
+        else:
+            if delta_col < 0:
+                dir = "left"
+                pos[1] -= 1
+            elif delta_col > 0:
+                dir = "right"
+                pos[1] += 1
+        return dir, pos
+"""

@@ -12,6 +12,8 @@
         );
     '''
 
+import json
+
 from .base import *
 TABLE = 'servers'
 """
@@ -54,3 +56,7 @@ def find_server_id(serverid=0, con=None):
 def update_server(server_rec={}, con=None):
     server_rec = update(table_name = TABLE, row = server_rec, con = con)
     return server_rec
+
+def read_params(server_rec):
+    params = json.loads(server_rec['params'])
+    return params 

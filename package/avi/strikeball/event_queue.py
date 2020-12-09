@@ -12,6 +12,12 @@ class EventQueue(mineEventQueue):
     def __init__(self, server):
         super().__init__(server)
 
+    def score_kill(self, user_rec, cell):
+        user_rec['score'] += 3
+
+    def shot(self, user_rec):
+        return True
+
     def process_event(self, event_rec):
         #print(datetime.now())
         # выстрел шариком
@@ -27,19 +33,21 @@ class EventQueue(mineEventQueue):
                 elif self.server.userballs.get(event_rec['userid'], 0) > 0:  # шар уже выстрелил у данного пользователя
                     event_rec['state'] = action_state.rejected
                 else:
-                    ballid = self.server.ball_last_id
-                    self.server.ball_last_id += 1
+                    if self.shot(user_rec):
+                        user.update_user(user_rec, con=self.server.con)
+                        ballid = self.server.ball_last_id
+                        self.server.ball_last_id += 1
 
-                    cell = map.find_cell(self.server.id, row, col, con=self.server.con)
-                    cell['obj'] = obj.ball
-                    cell['userid'] = ballid
-                    cell['image'] = ava_ball.ball
-                    map.update_cell(cell, self.server.con)
+                        cell = map.find_cell(self.server.id, row, col, con=self.server.con)
+                        cell['obj'] = obj.ball
+                        cell['userid'] = ballid
+                        cell['image'] = ava_ball.ball
+                        map.update_cell(cell, self.server.con)
 
-                    ball = Ball(self.server, ballid, event_rec['userid'], event_rec['action'])
-                    ball.start()
-                    self.server.balls[ballid] = ball
-                    self.server.userballs[event_rec['userid']] = self.server.userballs.get(event_rec['userid'], 0) + 1
+                        ball = Ball(self.server, ballid, event_rec['userid'], event_rec['action'])
+                        ball.start()
+                        self.server.balls[ballid] = ball
+                        self.server.userballs[event_rec['userid']] = self.server.userballs.get(event_rec['userid'], 0) + 1
 
         # движение шарика
         elif event_rec['action'] in [action.ball_move_down, action.ball_move_up, action.ball_move_left, action.ball_move_right]:
@@ -69,7 +77,6 @@ class EventQueue(mineEventQueue):
                             user_rec['kill_dt'] = strftime("%Y-%m-%d %H:%M:%S", gmtime()) 
                             user_rec['state'] = player_state.killed
                             user.update_user(user_rec, con=self.server.con)
-
                             user_orig_rec['score'] -= 10
                             user.update_user(user_orig_rec, con=self.server.con)
                     # попали в стража
@@ -79,13 +86,11 @@ class EventQueue(mineEventQueue):
                             guard.killed = True
                             guard.kill_dt =  datetime.utcnow()
                             cell['image'] = ava_guard.killed
+                            self.score_kill(user_orig_rec, cell)                            
                             map.update_cell(cell, self.server.con)
-
-                            user_orig_rec['score'] += 3
                             user.update_user(user_orig_rec, con=self.server.con)
                     # попали в мяч
                     elif cell and cell['obj'] == obj.ball:
-                        print('попали в мяч')
                         ball = self.server.balls.get(cell['userid'], None)
                         if ball:
                             ball.stop = True

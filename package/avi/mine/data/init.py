@@ -30,7 +30,8 @@ def create_tables(cursor, con=None):
         state    integer,
         start_dt timestamp,
         stop_dt  timestamp,
-        food_per_sec float
+        food_per_sec float,
+        params varchar(250)
         );
     '''
     cursor.execute(create_table_servers)
@@ -46,7 +47,9 @@ def create_tables(cursor, con=None):
         kill_dt timestamp,
         state  integer,
         row    integer,
-        col    integer        
+        col    integer,
+        team   integer,
+        params varchar(100)
         );
     '''
     cursor.execute(create_table_users)

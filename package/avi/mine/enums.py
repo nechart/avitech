@@ -7,6 +7,8 @@ class obj:
     guard = 3
     chest = 4
     ball = 5
+    building = 6
+
 
 class server_state:
     inactive = 0
@@ -40,7 +42,7 @@ class action:
     fire_left = 8
     fire_up = 9
     fire_down = 10
-
+    put = 11
     spawn_guard = 100
     spawn_chest = 101
     guard_kill = 102
@@ -85,16 +87,23 @@ class ava_guard:
 class ava_chest:
     chest1 = 'chest1'
     chest2 = 'chest2'
+    bulk = 'bulk'
 
     @staticmethod
     def items():
         return [ava_chest.chest1, 
-                ava_chest.chest2,]
+                ava_chest.chest2]
     
 class ava_ball:
     ball = 'ball'
     
     @staticmethod
     def items():
-        return [ava_chest.chest1, 
-                ava_chest.chest2]
+        return [ava_ball.ball]
+
+class ava_building:
+    location = 'location'
+    
+    @staticmethod
+    def items():
+        return [ava_building.location]

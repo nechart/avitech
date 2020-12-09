@@ -9,7 +9,6 @@ class Server(baseServer):
         self.server['food_per_sec'] = config.get('food_per_sec', 0.1)
         super().init_map(config, mapname)
 
-
     @staticmethod
     def create(server_name):
         return Server(server_name)            

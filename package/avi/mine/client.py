@@ -38,7 +38,7 @@ class Client():
         self.drawer = None
         self.server_obj = None
 
-    def connect(self, server_name, ava=None):
+    def connect(self, server_name, ava=None, team=0):
         self.con = base.connect()
         self.server = server.find_server(server_name, self.con)
         if self.server is None:
@@ -53,7 +53,7 @@ class Client():
         else:
             set_user_setup(self.user_name, ava, self.con)
 
-        self.user = find_or_create_user(self.server['id'], self.user_name, ava, self.con)
+        self.user = find_or_create_user(self.server['id'], self.user_name, ava, team, self.con)
         self.userid = self.user['id']
 
         if self.send_event(action.spawn) == action_state.processed:
@@ -63,12 +63,17 @@ class Client():
             self.user['state'] = player_state.active
             self.user['score'] = 0
             self.user['kills'] = 0
+            self.user['team'] = team
+            self.set_params()
             update_user(self.user, self.con)
             clear_output(wait=True)
             #print('Пользователь {} успешно подключен к серверу {}...'.format(self.user_name, server_name))
         else:
             raise ValueError('Не удалось подключить пользователя {}'.format(self.user_name))
 
+    def set_params(self):
+        self.user['params'] = write_params(init_params())
+    
     def refresh_user(self):
         self.user = find_user(self.userid, self.con)
 
@@ -135,8 +140,14 @@ class Drawer(Thread):
 
         for ava in ava_chest.items():
             self.images_ava[(obj.chest, ava)] = Image.from_file(path + '/images/{}.png'.format(ava))
+        self.images_ava[(obj.chest, ava_chest.bulk)] = Image.from_file(path + '/images/{}.png'.format(ava_chest.bulk))
+                
         self.images_ava[(obj.wall, '')] = Image.from_file(path + '/images/wall.png')
         self.images_ava[(obj.ball, ava_ball.ball)] = Image.from_file(path + '/images/ball.png')
+
+        for ava in ava_building.items():
+            self.images_ava[(obj.building, None)] = Image.from_file(path + '/images/{}.png'.format(ava))
+
         self.image_killed = Image.from_file(path + '/images/player_loss.png')
         self.image_space = Image.from_file(path + '/images/space.jpg')
 
@@ -148,11 +159,12 @@ class Drawer(Thread):
                             flex_flow='column',
                             align_items='stretch',
                             border='solid')
-                            #,width='30%')
 
         self.label_game_status = Label('Подключение к серверу...')
         
         self.panel_users = GridBox(children=[], layout=Layout(grid_template_columns="80px 80px 30px"))
+
+        self.feature_label = Label('Состояния игрока')
 
         # панель запуска-остановки-паузы
         #b_play = Button(description='ИГРА',icon = 'fa-play', layout = items_layout)
@@ -164,7 +176,9 @@ class Drawer(Thread):
         panel = VBox([HBox([Label('Сервер:'), Label(self.client.server['name'])]),
                           self.label_game_status,
                           HBox([Label('Игрок:'),Label(self.client.user_name), b_stop]),
-                          self.panel_users],
+                          self.feature_label,
+                          self.panel_users
+                          ],
                       layout=box_layout)    
         return panel          
         
@@ -269,4 +283,5 @@ class Drawer(Thread):
 
                 sleep(REDRAW_LAG)
             except Exception as e: 
-                pass
+                print(e)
+                #pass

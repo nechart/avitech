@@ -32,6 +32,7 @@ from time import sleep
 from threading import Thread
 import numpy as np
 import pathlib
+import json
 
 from .enums import *
 from .data.server import *
@@ -57,6 +58,9 @@ class Server():
         self.server['mapsize_y'] = len(config['map'])
         self.server['mapsize_x'] = len(config['map'][0])
         self.server['state'] = server_state.inactive
+        self.params = {}
+        self.init_params()
+        self.server['params'] = json.dumps(self.params)
         update_server(self.server, con=self.con)
 
         user.delete_users(self.id, con=self.con)
@@ -67,6 +71,9 @@ class Server():
         #self.map = self.get_map()
         #self.chests = []
         self.guards = []
+
+    def init_params(self):
+        pass
 
     def getEventQueue(self):
         return EventQueue

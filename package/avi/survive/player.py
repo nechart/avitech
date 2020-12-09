@@ -4,12 +4,13 @@ from .server import Server
 from .client import Client
 import getpass
 
+# Создадим словарь направлений для обхода по часовой стрелке:
+next_dir = {'up':'right', 'right':'down', 'down':'left', 'left':'up'}
 
 class Player(basePlayer):
-    def __init__(self, server_name, ava=None, user_name = None):
+    def __init__(self, server_name, ava=None, user_name=None, team=0):
         self.client = Client(user_name)
-        self.client.connect(server_name, ava)
-
+        self.client.connect(server_name, ava=ava, team=team)
 
     def get_goals(self, goals):
         """ Функция определения координат подходящих целей
@@ -30,7 +31,7 @@ class Player(basePlayer):
         return ret_goals
 
 
-    def bot_hunter(self, guards):
+    def bot_hunter(self, guards, rows=None, cols=None):
         """ Бот охотника"""
         objs = self.get_objs()  # осмотреться
 
@@ -39,6 +40,11 @@ class Player(basePlayer):
             return
         pos = self.get_pos()
         # исключаем ближайших стражей - чтоб не подходить к ним вплотную:
+        if not cols is None:
+            guards = [chest for chest in guards if chest[1] >= cols[0] and chest[1] <= cols[1]]
+        if not rows is None:
+            guards = [chest for chest in guards if chest[0] >= rows[0] and chest[0] <= rows[1]]
+
         guards = [guard for guard in guards if (abs(guard[0] - pos[0]) > 1) or (abs(guard[1] - pos[1]) > 1)]
         steps = self.find_shoot_pos(guards) # получить ближайшие позиции для стрельбы
         if steps: # проверить, что список позиций непустой
@@ -51,13 +57,37 @@ class Player(basePlayer):
             if dir:                     # проверить, что направление выбрано
                 self.shoot(dir)          # выполнить выстрел        
 
-    def bot_collector(self, chests):
+
+    def distance(self, pos1, pos2):
+        """ Расчитать расстояние между позициями """
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+    
+    
+    def move_to(self, pos_to, rows=None, cols=None):
+        """ Дойти до позиции"""
+        pos = self.get_pos()
+        while self.distance(pos_to, pos) > 1:
+            goal_dir = self.get_dir(pos_to)  # получить направление
+            if goal_dir:                     # проверить, что направление выбрано
+                objs = self.get_objs()  # осмотреться
+                if objs[goal_dir] == obj.guard:   # проверить, есть ли страж на пути - спрятаться
+                    self.hide()                  # если есть, то взять сокровище                
+                else:
+                    if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
+                        goal_dir = next_dir[goal_dir]   # выбрать следующее направление по часовой стрелке
+                    self.move(goal_dir)          # выполнить движение
+            pos = self.get_pos() # обновить свою позицию
+        return 
+
+    def bot_collector(self, chests, rows=None, cols=None):
         """ Бот собирателя"""
+        if not cols is None:
+            chests = [chest for chest in chests if chest[1] >= cols[0] and chest[1] <= cols[1]]
+        if not rows is None:
+            chests = [chest for chest in chests if chest[0] >= rows[0] and chest[0] <= rows[1]]
+
         chest = self.get_nearest(chests)  # найти самое близкое сокровище от игрока
         if chest is None: return
-
-        # Создадим словарь направлений для обхода по часовой стрелке:
-        next_dir = {'up':'right', 'right':'down', 'down':'left', 'left':'up'}
 
         goal_dir = self.get_dir(chest)  # получить направление
         if goal_dir:                     # проверить, что направление выбрано
