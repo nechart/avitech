@@ -74,8 +74,9 @@ class Player(basePlayer):
                 objs = self.get_objs()  # осмотреться
                 if objs[goal_dir] == obj.guard:   # проверить, есть ли страж на пути - спрятаться
                     self.hide()                  # если есть, то взять сокровище                
+                    continue # не учитываем эту позицию в прошлую
                 else:
-                    if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building] or pos_last:  # если в выбранном направлении стоит враг / игрок
+                    if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
                         goal_dir = next_dir[goal_dir]   # выбрать следующее направление по часовой стрелке
                     self.move(goal_dir)          # выполнить движение
             pos = self.get_pos() # обновить свою позицию
