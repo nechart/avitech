@@ -53,7 +53,7 @@ class Player(basePlayer):
                     self.move(goal_dir)          # выполнить движение
             if pos in pos_history:
                 return False
-            pos_history.add(pos)
+            pos_history.append(pos)
             pos = self.get_pos() # обновить свою позицию
         return True
 
