@@ -3,6 +3,7 @@ from ..mine.enums import *
 from .server import Server
 #from .client import Client
 import getpass
+from ..mine import map
 
 from ..mine.data import user
 
@@ -29,7 +30,6 @@ class Player(basePlayer):
         params = user.read_params(self.client.user['params'])
         return params['spaces']
 
-
     def get_location_pos(self, team=None):
         """ Получить координаты склада
         """
@@ -37,6 +37,28 @@ class Player(basePlayer):
             team = self.client.user['team']
         [row, col] = self.client.serv_params['teams'][team]['location'] 
         return (row, col)
+
+    def get_zone_cols(self, team=None):
+        """ Получить колонки зоны племени
+        """
+        if team is None:
+            team = self.client.user['team']
+        [col1, col2] = self.client.serv_params['teams'][team]['cols'] 
+        return (col1, col2)
+
+
+    def get_players(self, team=None):
+        # получить координаты игроков команды {name1:(row1, col1), name2:(row2, col2)}
+        cells = map.get_objs_by_type(serverid = self.client.server['id'], obj_type=obj.player, con=self.client.con)
+        players = {}
+        for cell in cells:
+            if not team is None:
+                if user_rec['team'] != team:
+                    continue
+            user_rec = user.find_user(cell['userid'], con=self.client.con)
+            if user_rec['state'] == player_state.active:
+                players[user_rec['name']] = (cell['row'], cell['col'])
+        return players    
 
     def action_hunt(self, rows=None, cols=None):
         """ Охотиться на ближайшего моба"""
