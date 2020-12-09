@@ -58,6 +58,7 @@ class EventQueue(Thread):
             user_rec['row'] = row
             user_rec['col'] = col
             user_rec['state'] = player_state.active
+            user_rec['params'] = user.write_params(user.init_params())
             user.update_user(user_rec, con=self.server.con)
             cell = map.find_cell(self.server.id, row, col, con=self.server.con)
             cell['obj'] = obj.player

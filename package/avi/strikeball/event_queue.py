@@ -77,7 +77,7 @@ class EventQueue(mineEventQueue):
                             user_rec['kill_dt'] = strftime("%Y-%m-%d %H:%M:%S", gmtime()) 
                             user_rec['state'] = player_state.killed
                             user.update_user(user_rec, con=self.server.con)
-                            user_orig_rec['score'] -= 10
+                            #user_orig_rec['score'] -= 10
                             user.update_user(user_orig_rec, con=self.server.con)
                     # попали в стража
                     elif cell and cell['obj'] == obj.guard:
