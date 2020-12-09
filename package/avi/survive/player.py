@@ -63,7 +63,7 @@ class Player(basePlayer):
         return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
     
     
-    def move_to(self, pos_to, rows=None, cols=None):
+    def move_to(self, pos_to):
         """ Дойти до позиции"""
         pos_last=(-1,-1)
         pos_last2=(-1,-1)

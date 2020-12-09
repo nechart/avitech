@@ -73,7 +73,7 @@ class Drawer(baseDrawer):
         #foods = sum(user_scores.values()) - secs * self.client.server['food_per_sec'] * len(user_scores.keys())
 
         if self.client.server['state'] == server_state.active:
-            state_caption = '  |  '.join(['К{0}:{1}'.format(k, team_scores[k]) for k in range(len(team_scores.keys()))])
+            state_caption = '  |  '.join(['К{0}:{1}'.format(k, team_scores[k]) for k in sorted((team_scores.keys()))])
         else:
              state_caption = 'Остановлен'
 
