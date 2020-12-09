@@ -6,6 +6,7 @@ import getpass
 
 # Создадим словарь направлений для обхода по часовой стрелке:
 next_dir = {'up':'right', 'right':'down', 'down':'left', 'left':'up'}
+prev_dir = {'up':'left', 'right':'up', 'down':'right', 'left':'down'}
 
 class Player(basePlayer):
     def __init__(self, server_name, ava=None, user_name=None, team=0):
@@ -30,38 +31,9 @@ class Player(basePlayer):
         
         return ret_goals
 
-
-    def bot_hunter(self, guards, rows=None, cols=None):
-        """ Бот охотника"""
-        objs = self.get_objs()  # осмотреться
-
-        if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
-            self.hide()  # если да, спрятаться
-            return
-        pos = self.get_pos()
-        # исключаем ближайших стражей - чтоб не подходить к ним вплотную:
-        if not cols is None:
-            guards = [chest for chest in guards if chest[1] >= cols[0] and chest[1] <= cols[1]]
-        if not rows is None:
-            guards = [chest for chest in guards if chest[0] >= rows[0] and chest[0] <= rows[1]]
-
-        guards = [guard for guard in guards if (abs(guard[0] - pos[0]) > 1) or (abs(guard[1] - pos[1]) > 1)]
-        steps = self.find_shoot_pos(guards) # получить ближайшие позиции для стрельбы
-        if steps: # проверить, что список позиций непустой
-            (step_num, step_dir) = steps[0] # взять первую позицию из списка (число шагов, направление)
-            for _ in range(step_num): # цикл на число шагов
-                self.move(step_dir)    # движение в нужном направлении
-        goals = self.get_goals(guards) # здесь игрок должен быть уже на позиции, проверим, есть ли цели для стрельбы
-        if goals:  # если цели есть (список не пустой)
-            dir = self.get_dir(goals[0])  # получить направление выстрела для первой по близости цели
-            if dir:                     # проверить, что направление выбрано
-                self.shoot(dir)          # выполнить выстрел        
-
-
     def distance(self, pos1, pos2):
         """ Расчитать расстояние между позициями """
         return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
-    
     
     def move_to(self, pos_to):
         """ Дойти до позиции"""
@@ -77,8 +49,10 @@ class Player(basePlayer):
                     continue # не учитываем эту позицию в прошлую
                 else:
                     if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
-                        goal_dir = next_dir[goal_dir]   # выбрать следующее направление по часовой стрелке
-                    self.move(goal_dir)          # выполнить движение
+                        if not self.move(next_dir[goal_dir]):   # выбрать следующее направление по часовой стрелке
+                            self.move(prev_dir[goal_dir]) # выбрать следующее направление против часовой стрелке
+                    else:
+                        self.move(goal_dir)          # выполнить движение
             pos = self.get_pos() # обновить свою позицию
             pos_last2 = pos_last
             pos_last = pos
@@ -86,6 +60,7 @@ class Player(basePlayer):
                 return False
         return True
 
+    ####################################
     def bot_collector(self, chests, rows=None, cols=None):
         """ Бот собирателя"""
         if not cols is None:
@@ -114,6 +89,34 @@ class Player(basePlayer):
             self.pick()                  # если есть, то взять сокровище
         if obj.guard in objs:   # проверить, есть ли сокровище по близости. 
             self.hide()                  # если есть, то взять сокровище  
+
+
+    def bot_hunter(self, guards, rows=None, cols=None):
+        """ Бот охотника"""
+        objs = self.get_objs()  # осмотреться
+
+        if obj.guard in objs.values():   # проверить, есть ли страж по близости. 
+            self.hide()  # если да, спрятаться
+            return
+        pos = self.get_pos()
+        # исключаем ближайших стражей - чтоб не подходить к ним вплотную:
+        if not cols is None:
+            guards = [chest for chest in guards if chest[1] >= cols[0] and chest[1] <= cols[1]]
+        if not rows is None:
+            guards = [chest for chest in guards if chest[0] >= rows[0] and chest[0] <= rows[1]]
+
+        guards = [guard for guard in guards if (abs(guard[0] - pos[0]) > 1) or (abs(guard[1] - pos[1]) > 1)]
+        steps = self.find_shoot_pos(guards) # получить ближайшие позиции для стрельбы
+        if steps: # проверить, что список позиций непустой
+            (step_num, step_dir) = steps[0] # взять первую позицию из списка (число шагов, направление)
+            for _ in range(step_num): # цикл на число шагов
+                self.move(step_dir)    # движение в нужном направлении
+        goals = self.get_goals(guards) # здесь игрок должен быть уже на позиции, проверим, есть ли цели для стрельбы
+        if goals:  # если цели есть (список не пустой)
+            dir = self.get_dir(goals[0])  # получить направление выстрела для первой по близости цели
+            if dir:                     # проверить, что направление выбрано
+                self.shoot(dir)          # выполнить выстрел        
+
 
     def bot_bodyguard(self, player, guards):
         """ Бот телохранителя.
