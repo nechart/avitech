@@ -65,6 +65,8 @@ class Player(basePlayer):
     
     def move_to(self, pos_to, rows=None, cols=None):
         """ Дойти до позиции"""
+        pos_last=(-1,-1)
+        pos_last2=(-1,-1)
         pos = self.get_pos()
         while self.distance(pos_to, pos) > 1:
             goal_dir = self.get_dir(pos_to)  # получить направление
@@ -73,11 +75,15 @@ class Player(basePlayer):
                 if objs[goal_dir] == obj.guard:   # проверить, есть ли страж на пути - спрятаться
                     self.hide()                  # если есть, то взять сокровище                
                 else:
-                    if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building]:  # если в выбранном направлении стоит враг / игрок
+                    if objs[goal_dir] in [obj.wall, obj.player, obj.chest, obj.building] or pos_last:  # если в выбранном направлении стоит враг / игрок
                         goal_dir = next_dir[goal_dir]   # выбрать следующее направление по часовой стрелке
                     self.move(goal_dir)          # выполнить движение
             pos = self.get_pos() # обновить свою позицию
-        return 
+            pos_last2 = pos_last
+            pos_last = pos
+            if (pos_last2 == pos):  # произошло зацикливание
+                return False
+        return True
 
     def bot_collector(self, chests, rows=None, cols=None):
         """ Бот собирателя"""

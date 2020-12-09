@@ -79,6 +79,6 @@ levels = {'empty':{'map': mlevel_empty, 'guards':6, 'chests':10},
           'survival':{'map': mlevel_survival_empty, 'guards':8, 'chests':8},
           'camp':{'map': mlevel_camp2, 'guards':8, 'chests':8, 
             'teams':[{'color':'blue', 'location':(5,1)},
-                     {'color':'green', 'location':(5,18)}]
+                     {'color':'yellow', 'location':(5,18)}]
                 }
         }
