@@ -157,7 +157,7 @@ def rate(quiz = '2020'):
     for topic, name in topics.items():
         print('\n')
         topic_df = res_df[res_df.index.str.startswith(topic)]
-        if not topic_df.empty():
+        if not topic_df.empty:
             rate = topic_df.value.sum()/topic_df.value.count()
             print('{0}: {1}%'.format(name, round(rate*100)))
             user_name = getpass.getuser()
