@@ -5,6 +5,7 @@ from IPython.display import clear_output
 import getpass
 
 from .data_quiz import *
+from .setup import quizzes
 
 results = {}
 
@@ -145,24 +146,22 @@ def rate(quiz = '2020'):
     import pandas as pd
     res_df = pd.Series(results).to_frame(name="value")
 
-    topics = {'var':'Переменные. Типы данных. Вывод на экран.',
-            'cond':'Условные операторы',
-            'cycle':'Циклы',
-            'list':'Списки. Словари',          
-            'build':'Встроенные функции',          
-            'func':'Функции',
-            'file':'Файлы'
-            }
+    quiz = quizzes.get(quiz, None)
+    if quiz is None:
+        print('Название теста не найдено')
+        return
+    
+    topics = quiz['topics']
 
     print('Результат:')
     for topic, name in topics.items():
         print('\n')
         topic_df = res_df[res_df.index.str.startswith(topic)]
-        rate = topic_df.value.sum()/topic_df.value.count()
-        print('{0}: {1}%'.format(name, round(rate*100)))
-
-        user_name = getpass.getuser()
-        insert_quiz(quiz, user_name, topic, rate)
+        if not topic_df.empty():
+            rate = topic_df.value.sum()/topic_df.value.count()
+            print('{0}: {1}%'.format(name, round(rate*100)))
+            user_name = getpass.getuser()
+            insert_quiz(quiz, user_name, topic, rate)
 
     print('\n')    
     print('Всего: {0} баллов из 100'.format(round(sum(results.values())/len(results.values())*100)))
