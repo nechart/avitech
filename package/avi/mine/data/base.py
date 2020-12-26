@@ -135,7 +135,8 @@ def delete(cursor='', table_name='', wheres={}, con = None):
     """delete rows"""
     where_list = ["{0} = %s".format(k) for k in wheres.keys()]
     where_str = ' and '.join(where_list)
-    values = (tuple(wheres.values()),)
+#    values = (tuple(wheres.values()),)
+    values = tuple(wheres.values())
     delete_query = 'DELETE FROM {0} WHERE {1};'''.format(table_name, where_str)
     cursor.execute(delete_query, values)
     return cursor.rowcount

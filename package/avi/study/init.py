@@ -23,6 +23,7 @@ def create_tables(cursor, con=None):
     '''
     cursor.execute(create_table_servers)
 
+    cursor.execute('CREATE UNIQUE INDEX quiz_name_idx ON quizzes (quizname, username, topic);')    
     return
 
 

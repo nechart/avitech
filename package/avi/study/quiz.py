@@ -146,12 +146,15 @@ def rate(quiz = '2020'):
     import pandas as pd
     res_df = pd.Series(results).to_frame(name="value")
 
-    quiz = quizzes.get(quiz, None)
-    if quiz is None:
+    quiz_setup = quizzes.get(quiz, None)
+    if quiz_setup is None:
         print('Название теста не найдено')
         return
     
-    topics = quiz['topics']
+    topics = quiz_setup['topics']
+
+    user_name = getpass.getuser()
+    delete_quiz_user(quizname=quiz, username=user_name)
 
     print('Результат:')
     for topic, name in topics.items():
@@ -160,7 +163,6 @@ def rate(quiz = '2020'):
         if not topic_df.empty:
             rate = topic_df.value.sum()/topic_df.value.count()
             print('{0}: {1}%'.format(name, round(rate*100)))
-            user_name = getpass.getuser()
             insert_quiz(quiz, user_name, topic, rate)
 
     print('\n')    
