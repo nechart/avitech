@@ -2,6 +2,9 @@ import ipywidgets as widgets
 import sys
 from IPython.display import display
 from IPython.display import clear_output
+import getpass
+
+from .data_quiz import *
 
 results = {}
 
@@ -115,9 +118,9 @@ def launch(quiz = '2020'):
     print('*'*30)
     print('Функции. Модули')
     display(create_multipleChoice_widget('func_1', 'Как объявить функцию func с двумя аргументами, второй аргумент по умолчанию 1?',
-                                        ['def func(a, b):', 'def func(a=0, b):', 'def func(a, b=0):'],
-                                        'def func(a, b=0):'))
-    display(create_multipleChoice_widget('func_2', 'Как скопировать в функции изменяемый объект obj?',
+                                        ['def func(a, b):', 'def func(a=1, b):', 'def func(a, b=1):'],
+                                        'def func(a, b=1):'))
+    display(create_multipleChoice_widget('func_2', 'Как скопировать внутри функции изменяемый объект obj из параметров?',
                                         ['copy(obj)', 'obj2 = obj', 'obj.copy()'],
                                         'obj.copy()'))
     display(create_multipleChoice_widget('func_3', 'Что дает выражение в функции: global x ?',
@@ -157,5 +160,9 @@ def rate(quiz = '2020'):
         topic_df = res_df[res_df.index.str.startswith(topic)]
         rate = topic_df.value.sum()/topic_df.value.count()
         print('{0}: {1}%'.format(name, round(rate*100)))
+
+        user_name = getpass.getuser()
+        insert_quiz(quiz, user_name, topic, rate)
+
     print('\n')    
     print('Всего: {0} баллов из 100'.format(round(sum(results.values())/len(results.values())*100)))
