@@ -20,11 +20,11 @@ def find_quizzes(quizname, con=None):
     return quiz_set
 
 def insert_quiz(quizname, username, topicname, rate, con=None):
-    wheres = {'quizname': quizname, 'username': username, 'topicname': topicname, 'rate': rate}
+    wheres = {'quizname': quizname, 'username': username, 'topic': topicname, 'rate': rate}
     user_rec = insert(table_name = TABLE, row = wheres, con=con)
     return user_rec
 
-def delete_quiz(quizname, username, topicname, rate, con=None):
-    wheres = {'quizname': quizname, 'username': username, 'topicname': topicname, 'rate': rate}
-    user_rec = insert(table_name = TABLE, row = wheres, con=con)
+def delete_quiz(quizname, username, con=None):
+    wheres = {'quizname': quizname, 'username': username}
+    user_rec = delete(table_name = TABLE, wheres = wheres, con=con)
     return user_rec
