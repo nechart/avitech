@@ -71,8 +71,8 @@ def launch(quiz = '2020'):
                                         ['10','15','5'],'15'))
     display(create_multipleChoice_widget('cond_3', 'Как правильно записать условие a больше b и a не больше с:',
                                         ['a>b and a<c', 'a>b or a<=c', 'a>b and not a>c'],'a>b and not a>c'))
-    display(create_multipleChoice_widget('cond_4', 'Какой символ используется в тернарном операторе:',
-                                        ['?', '*', ':','.'],'?'))
+    display(create_multipleChoice_widget('cond_4', 'Какие слова используется в тернарном операторе:',
+                                        ['if else', 'if elif', 'elif else','and or'],'if else'))
     print('*'*30)
     print('Циклы')
     display(create_multipleChoice_widget('cycle_1', 'Чем отличаются цикл while от цикла for?',
@@ -124,7 +124,7 @@ def launch(quiz = '2020'):
     display(create_multipleChoice_widget('func_2', 'Как скопировать внутри функции изменяемый объект obj из параметров?',
                                         ['copy(obj)', 'obj2 = obj', 'obj.copy()'],
                                         'obj.copy()'))
-    display(create_multipleChoice_widget('func_3', 'Что дает выражение в функции: global x ?',
+    display(create_multipleChoice_widget('func_3', 'Для чего объявляют выражение в функции: global x ?',
                                         ['для чтения глобальной переменной х', 'для записи глобальной переменной х', 'объявление глобальной переменной х'],
                                         'для записи глобальной переменной х'))
     display(create_multipleChoice_widget('func_4', 'Как импортировать модуль работы со случайными числами?',
@@ -135,7 +135,7 @@ def launch(quiz = '2020'):
     display(create_multipleChoice_widget('file_1', 'Как открыть файл file1.txt, чтоб он автоматически закрылся?',
                                         ["with open('file1.txt') as file:", "open('file1.txt')", "with file = 'file1.txt'"],
                                         "with open('file1.txt') as file:"))
-    display(create_multipleChoice_widget('file_2', 'Что прочитает функцию file.readline()',
+    display(create_multipleChoice_widget('file_2', 'Что прочитает функция file.readline()',
                                         ['все содержимое файла', 'первую строку файла', 'текущую строку файла'],
                                         'текущую строку файла'))
     display(create_multipleChoice_widget('file_3', 'Как записать список строк в файл?',
