@@ -12,6 +12,7 @@ pip3 install -e git+https://github.com/nechart/avitech#egg=version_subpkg&subdir
 
 # To server
 # todo: https://stackoverflow.com/questions/13566200/how-can-i-install-from-a-git-subdirectory-with-pip
+rm -rf avitech
 git clone https://github.com/nechart/avitech
 cd avitech
 pip3 install --upgrade --force ./package
