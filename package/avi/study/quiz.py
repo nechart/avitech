@@ -51,8 +51,38 @@ def create_multipleChoice_widget(quiz, description, options, correct_answer):
     return widgets.VBox([description_out, alternativ, check, feedback_out])
 
 def launch(quiz = '2020'):
-    from IPython.display import display
+    if quiz == '2020':
+        make_quiz_2020()
+    elif quiz == '2021':
+        make_quiz_2021()
 
+def rate(quiz = '2020'):
+    import pandas as pd
+    res_df = pd.Series(results).to_frame(name="value")
+
+    quiz_setup = quizzes.get(quiz, None)
+    if quiz_setup is None:
+        print('Название теста не найдено')
+        return
+    
+    topics = quiz_setup['topics']
+
+    user_name = getpass.getuser()
+    delete_quiz_user(quizname=quiz, username=user_name)
+
+    print('Результат:')
+    for topic, name in topics.items():
+        print('\n')
+        topic_df = res_df[res_df.index.str.startswith(topic)]
+        if not topic_df.empty:
+            rate = topic_df.value.sum()/topic_df.value.count()
+            print('{0}: {1}%'.format(name, round(rate*100)))
+            insert_quiz(quiz, user_name, topic, rate)
+
+    print('\n')    
+    print('Всего: {0} баллов из 100'.format(round(sum(results.values())/len(results.values())*100)))
+
+def make_quiz_2020():
     print('*'*30)
     print('Переменные. Типы данных. Вывод на экран.')
     display(create_multipleChoice_widget('var_1', 'В переменную какого типа python запишет число 1.56? ',
@@ -142,28 +172,40 @@ def launch(quiz = '2020'):
                                         ['file.writelines()', 'file.readlines()', 'file.writeline()'],
                                         'file.writelines()'))
 
-def rate(quiz = '2020'):
-    import pandas as pd
-    res_df = pd.Series(results).to_frame(name="value")
-
-    quiz_setup = quizzes.get(quiz, None)
-    if quiz_setup is None:
-        print('Название теста не найдено')
-        return
-    
-    topics = quiz_setup['topics']
-
-    user_name = getpass.getuser()
-    delete_quiz_user(quizname=quiz, username=user_name)
-
-    print('Результат:')
-    for topic, name in topics.items():
-        print('\n')
-        topic_df = res_df[res_df.index.str.startswith(topic)]
-        if not topic_df.empty:
-            rate = topic_df.value.sum()/topic_df.value.count()
-            print('{0}: {1}%'.format(name, round(rate*100)))
-            insert_quiz(quiz, user_name, topic, rate)
-
-    print('\n')    
-    print('Всего: {0} баллов из 100'.format(round(sum(results.values())/len(results.values())*100)))
+def make_quiz_2021():
+    print('*'*30)
+    print('Переменные. Типы данных. Вывод на экран.')
+    display(create_multipleChoice_widget('var_1', 'В переменную какого типа python запишет число 1.56? ',
+                                        ['int', 'str', 'float','boolean'],'float'))
+    display(create_multipleChoice_widget('var_2', 'Что напечатает следующий код: print(1, "*"*3, 3 == 2+1)',
+                                        ['1*3 == 2+1','1 *** True','1"*"*3True'],'1 *** True'))
+    display(create_multipleChoice_widget('var_3', 'Выбери правильный тип type(1==3)',
+                                        ['int', 'str', 'float','boolean'],'boolean'))
+    display(create_multipleChoice_widget('var_4', 'Как правильно прочитать от пользователя целое число?',
+                                        ['i1=int(input())', 'i1=input(int)', 'i1=input()'],'i1=int(input())'))
+    print('*'*30)
+    print('Условные операторы')
+    display(create_multipleChoice_widget('cond_1', 'Какой оператор не относится к условным?',
+                                        ['if', 'elif', 'print','and', 'else'],'print'))
+    display(create_multipleChoice_widget('cond_2', 'Чему будет равна переменная res, если a = 5: if (a > 6): res = 10 else: res = 15',
+                                        ['10','15','5'],'15'))
+    display(create_multipleChoice_widget('cond_3', 'Как правильно записать условие a больше b и a не больше с:',
+                                        ['a>b and a<c', 'a>b or a<=c', 'a>b and not a>c'],'a>b and not a>c'))
+    display(create_multipleChoice_widget('cond_4', 'В каком ответе условие a меньше либо равно 5 записано неверно?',
+                                        ['if a <= 5', 'if a < 5 or a == 5', 'if a < 5 and a == 5','if not a > 5'],'if a < 5 and a == 5'))
+    print('*'*30)
+    print('Turtle')
+    display(create_multipleChoice_widget('turtle_1', 'Что делает команда shape("ball")',
+                                        ['рисует круг', 'изображает курсора в виде мяча', 'рисует мяч'],
+                                        'изображает курсора в виде мяча'))
+    display(create_multipleChoice_widget('turtle_2', 'Какой код двигает черепаху вперед на 10 и поворачивает ее налево на 15?',
+                                        ['left(10) fd(15)','fd(10) left(15)','fd(15) left(10)'],
+                                        'fd(10) left(15)'))
+    display(create_multipleChoice_widget('turtle_3', 'Какой код нарисует закрашенный круг?',
+                                        ['begin_fill() circle() end_fill()', 'circle() begin_fill() end_fill()', 'circle()', 'end_fill() circle() begin_fill()'],
+                                        'begin_fill() circle() end_fill()'))
+    display(create_multipleChoice_widget('turtle_4', 'Какой код развернет черепаху вниз?',
+                                        ['seth(270)', 'seth(360)', 'seth(180)','seth(90)'],'seth(270)'))
+    display(create_multipleChoice_widget('turtle_5', 'Что делает этот код: distance(10, 20)',
+                                        ['переводит черепаху в точку (10, 20)', 'меряет расстояние до точки с X=10 и Y=20', 'меряет расстояние до точки с Y=10 и X=20'],
+                                        'меряет расстояние до точки с X=10 и Y=20'))                                        
