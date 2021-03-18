@@ -55,6 +55,8 @@ def launch(quiz = '2020'):
         make_quiz_2020()
     elif quiz == '2021':
         make_quiz_2021()
+    elif quiz == '2021_cycle':        
+        make_quiz_2021_cycle()
 
 def rate(quiz = '2020'):
     import pandas as pd
@@ -208,4 +210,54 @@ def make_quiz_2021():
                                         ['seth(270)', 'seth(360)', 'seth(180)','seth(90)'],'seth(270)'))
     display(create_multipleChoice_widget('turtle_5', 'Что делает этот код: distance(10, 20)',
                                         ['переводит черепаху в точку (10, 20)', 'меряет расстояние до точки с X=10 и Y=20', 'меряет расстояние до точки с Y=10 и X=20'],
-                                        'меряет расстояние до точки с X=10 и Y=20'))                                        
+                                        'меряет расстояние до точки с X=10 и Y=20'))        
+
+def make_quiz_2021_cycle():
+    print('*'*30)
+    print('Циклы')
+    display(create_multipleChoice_widget('cycle_1', 'Чем отличаются цикл while от цикла for?',
+                                        ['ничем - оба создают циклы', 'while работает по условию, for - по множеству', 'while работает по множеству, for - по условию','while - это пока, а for - для'],
+                                        'while работает по условию, for - по множеству'))
+    display(create_multipleChoice_widget('cycle_2', 'Чем отличаются инструкции continue и break?',
+                                        ['continue прерывает цикл, а break итерацию','continue прерывает итерацию, а break - цикл','обе инструкции прерывают цикл'],
+                                        'continue прерывает итерацию, а break - цикл'))
+    display(create_multipleChoice_widget('cycle_3', 'Сколько раз выполнится цикл: for i in range(1, 20)?',
+                                        ['1', '19', '20', '21'],'19'))
+    display(create_multipleChoice_widget('cycle_4', 'Сколько раз выполнится цикл: while 4 > 5:',
+                                        ['4', '5', 'бесконечное число','ни разу'],'ни разу'))
+
+    print('*'*30)
+    print('Списки. Кортежи. Словари')
+    display(create_multipleChoice_widget('list_1', 'Какое число напечатает команда print: list1 = [1, 2, 3, 4] print(list1[-2]) ?',
+                                        ['1', '2', '3','4'],
+                                        '3'))
+    display(create_multipleChoice_widget('list_2', 'Каким будет список list2 = [1, 2, 3] после команды list2.insert(3, 4)?',
+                                        ['[1, 4, 2, 3]', '[1, 2, 3, 4]', '[4, 1, 2, 3]'],
+                                        '[1, 2, 3, 4]'))
+    display(create_multipleChoice_widget('list_3', 'Каким будет список list3 = [3, 4, 5, 2] после команды list3.remove(2)?',
+                                        ['[3, 4, 5]', '[3, 4, 2]', '[3, 4, 5, 2, 2]'],
+                                        '[3, 4, 5]'))
+    display(create_multipleChoice_widget('list_4', 'Каким будет список list4 = [3, 4, 5, 2] после команды list4.sort(reverse=True)?',
+                                        ['[3, 4, 5, 2]', '[2, 3, 4, 5]', '[5, 4, 3, 2]'],
+                                        '[5, 4, 3, 2]'))
+
+    print('*'*30)
+    print('Turtle. Объекты черепах и их формы')
+    display(create_multipleChoice_widget('turtle_1', 'Зачем нужен объект черепаха?',
+                                        ['для рисования', 'для контроля за игровым объектом', 'для перемещения'],
+                                        'для контроля за игровым объектом'))
+    display(create_multipleChoice_widget('turtle_2', 'Как узнать расстояние между объектами черепах t1 и t2?',
+                                        ['t1.distance(t2)', 't1.pos(t2)', 't1.stump(t2)'],
+                                        't1.distance(t2)'))
+    display(create_multipleChoice_widget('turtle_3', 'Какие бывают формы черепах?',
+                                        ['встроенные, gif и полигональные','встроенные, gif, полигональные и составные','встроенные и полигональные'],
+                                        'встроенные, gif, полигональные и составные'))
+    display(create_multipleChoice_widget('turtle_4', 'Какая команду увеличит форму в 2 раза в продольном направлении и сделает границу формы равную 3 точкам?',
+                                        ['shapesize(2, 3)', 'shapesize(3, 2)', 'shapesize(1, 2, 3)', 'shapesize(3, 2, 1)'],
+                                        'shapesize(1, 2, 3)'))
+    display(create_multipleChoice_widget('turtle_4', 'Если вызвана команда begin_poly(), какую команду важно не забыть вызвать?',
+                                        ['get_poly()', 'end_poly()', 'addcomponent'],
+                                        'end_poly()'))
+    display(create_multipleChoice_widget('Чем удобна краткая форма записи полигональной формы?',
+                                        ['мгновенно рисуется, занимает мало места, может быть сохранена в файле настроек', 'записью в одну строку', 'координатами'],
+                                        'мгновенно рисуется, занимает мало места, может быть сохранена в файле настроек'))                                      
