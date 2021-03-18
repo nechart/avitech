@@ -255,9 +255,10 @@ def make_quiz_2021_cycle():
     display(create_multipleChoice_widget('turtle_4', 'Какая команду увеличит форму в 2 раза в продольном направлении и сделает границу формы равную 3 точкам?',
                                         ['shapesize(2, 3)', 'shapesize(3, 2)', 'shapesize(1, 2, 3)', 'shapesize(3, 2, 1)'],
                                         'shapesize(1, 2, 3)'))
-    display(create_multipleChoice_widget('turtle_4', 'Если вызвана команда begin_poly(), какую команду важно не забыть вызвать?',
+    display(create_multipleChoice_widget('turtle_5', 'Если вызвана команда begin_poly(), какую команду важно не забыть вызвать?',
                                         ['get_poly()', 'end_poly()', 'addcomponent'],
                                         'end_poly()'))
-    display(create_multipleChoice_widget('Чем удобна краткая форма записи полигональной формы?',
+    display(create_multipleChoice_widget('turtle_6', 'Чем удобна краткая форма записи полигональной формы?',
                                         ['мгновенно рисуется, занимает мало места, может быть сохранена в файле настроек', 'записью в одну строку', 'координатами'],
-                                        'мгновенно рисуется, занимает мало места, может быть сохранена в файле настроек'))                                      
+                                        'мгновенно рисуется, занимает мало места, может быть сохранена в файле настроек'))                                     
+    return
